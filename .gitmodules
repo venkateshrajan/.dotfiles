@@ -1,0 +1,6 @@
+[submodule "alacritty/alacritty-theme"]
+	path = alacritty/alacritty-theme
+	url = https://github.com/eendroroy/alacritty-theme.git
+[submodule "init.lua"]
+	path = init.lua
+	url = https://github.com/venkateshrajan/init.lua.git
