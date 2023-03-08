@@ -20,3 +20,8 @@ ln -s "$(pwd)/init.lua" ~/.config/nvim
 rm -rf ~/.zshrc
 ln -s "$(pwd)/.zshrc" ~/.zshrc
 source ~/.zshrc
+
+#tmux
+rm -rf ~/.tmux.conf
+ln -s "$(pwd)/.tmux.conf" ~/.tmux.conf
+source ~/.tmux.conf

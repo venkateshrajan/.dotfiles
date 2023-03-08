@@ -100,5 +100,6 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+alias tj="~/.dotfiles/scripts/tmux-session-finder.sh"
 
 fpath+=${ZDOTDIR:-~}/.zsh_functions
