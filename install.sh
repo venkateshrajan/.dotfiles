@@ -14,7 +14,7 @@ ln -s "$(pwd)/i3" ~/.config/i3
 
 # nvim
 rm -rf ~/.config/nvim
-ln -s "$(pwd)/init.lua/unix" ~/.config/nvim
+ln -s "$(pwd)/init.lua" ~/.config/nvim
 
 # ohmyzsh
 rm -rf ~/.zshrc
