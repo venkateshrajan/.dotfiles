@@ -19,7 +19,7 @@ git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-m
 ```
 
 ### neovim
-https://github.com/neovim/neovim/releases/tag/stable
+install [stable](https://github.com/neovim/neovim/releases/tag/stable)
 
 ## Installation
 This repo has submodules so please clone it with the following command.
@@ -45,7 +45,6 @@ Check the version of nvim and make sure if its a latest one
 :version
 ```
 
-If you are getting broken-pipe error when trying to overwrite the old package with the new one
-https://askubuntu.com/questions/1062171/dpkg-deb-error-paste-subprocess-was-killed-by-signal-broken-pipe
+If you are getting broken-pipe error when trying to overwrite the old package with the new one. Follow the [thread](https://askubuntu.com/questions/1062171/dpkg-deb-error-paste-subprocess-was-killed-by-signal-broken-pipe)
 
 
