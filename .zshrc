@@ -102,5 +102,6 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias ts="~/.dotfiles/scripts/tmux-session-finder.sh"
 alias ls="lsd"
+alias gd="~/.dotfiles/scripts/get-diff-names.sh"
 
 fpath+=${ZDOTDIR:-~}/.zsh_functions
