@@ -27,6 +27,17 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 After installing brew using the install.sh it will show you the remaining two commands with correct arguments.
 Always copy those two commands from the output
 
+## Tools
+### wget
+```zsh
+sudo apt install wget
+```
+### lsd
+go to the lsd [github releases page](https://github.com/lsd-rs/lsd/releases) and copy .deb file's link
+```zsh
+wget <copied link>
+sudo apt install ./*.deb
+```
 
 ## TMUX
 ### tpm
@@ -71,9 +82,15 @@ Check the version of nvim and make sure if its a latest one
 
 If you are getting broken-pipe error when trying to overwrite the old package with the new one. Follow the [thread](https://askubuntu.com/questions/1062171/dpkg-deb-error-paste-subprocess-was-killed-by-signal-broken-pipe)
 
+The meat of the above thread is the following two commands
+```zsh
+sudo dpkg -i --force-overwrite *.deb
+sudo apt -f install
+```
+
 navigate to `nvim ~/.config/nvim/lua/venky/packer.lua`
 
-Do `:source` and them `:PackerSync`. This will download all the tmux-plugins.
+Do `:source` and then `:PackerSync`. This will download all the tmux-plugins.
 After the PackerSync if the colors aren't set correctly run `:lua ColorMyPencils()`
 
 
