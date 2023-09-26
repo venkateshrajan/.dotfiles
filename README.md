@@ -26,6 +26,7 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 ```
 After installing brew using the install.sh it will show you the remaining two commands with correct arguments.
 Always copy those two commands from the output
+Brew is needed to install fzf. Brew cannot be installed as root
 
 
 ## TMUX
@@ -39,6 +40,11 @@ Open tmux by typing `tmux` and then `Ctrl+b+I` to install tpm plugins
 fzf is necessary for the `ts` alias
 ```zsh
 brew install fzf
+```
+If you are running as root
+```zsh
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install
 ```
 
 ## NVIM
