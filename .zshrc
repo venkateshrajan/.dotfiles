@@ -103,6 +103,7 @@ source $ZSH/oh-my-zsh.sh
 alias ts="~/.dotfiles/scripts/tmux-session-finder.sh"
 alias ls="lsd"
 alias gd="~/.dotfiles/scripts/get-diff-names.sh"
+alias lssh='ssh `cat ~/.commvault/known_hosts | fzf` -t tmux a'
 
 fpath+=${ZDOTDIR:-~}/.zsh_functions
 
