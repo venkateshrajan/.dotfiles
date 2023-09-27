@@ -103,8 +103,8 @@ source $ZSH/oh-my-zsh.sh
 alias ts="~/.dotfiles/scripts/tmux-session-finder.sh"
 alias ls="lsd"
 alias gd="~/.dotfiles/scripts/get-diff-names.sh"
-alias tsm='ssh `cat ~/.commvault/known_hosts | fzf` -t tmux a'
-alias sm='ssh `cat ~/.commvault/known_hosts | fzf`'
+alias tsm='ssh `cat ~/.commvault/known_hosts | fzf -d , --with-nth 2 | cut -d, -f1` -t tmux a'
+alias sm='ssh `cat ~/.commvault/known_hosts | fzf -d , --with-nth 2 | cut -d, -f1`'
 
 unalias z
 eval "$(zoxide init zsh)"
