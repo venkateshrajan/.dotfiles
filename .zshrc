@@ -103,11 +103,17 @@ source $ZSH/oh-my-zsh.sh
 alias ts="~/.dotfiles/scripts/tmux-session-finder.sh"
 alias ls="lsd"
 alias gd="~/.dotfiles/scripts/get-diff-names.sh"
-alias lssh='ssh `cat ~/.commvault/known_hosts | fzf` -t tmux a'
+alias tsm='ssh `cat ~/.commvault/known_hosts | fzf` -t tmux a'
+alias sm='ssh `cat ~/.commvault/known_hosts | fzf`'
 
+unalias z
+eval "$(zoxide init zsh)"
 fpath+=${ZDOTDIR:-~}/.zsh_functions
+alias cd="z"
+alias cdi="zi"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
