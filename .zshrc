@@ -103,13 +103,21 @@ source $ZSH/oh-my-zsh.sh
 alias ts="~/.dotfiles/scripts/tmux-session-finder.sh"
 alias ls="lsd"
 alias gd="~/.dotfiles/scripts/get-diff-names.sh"
+alias tsm='ssh `cat ~/.commvault/known_hosts | fzf -d , --with-nth 2 | cut -d, -f1` -t tmux a'
+alias sm='ssh `cat ~/.commvault/known_hosts | fzf -d , --with-nth 2 | cut -d, -f1`'
 
+unalias z
+eval "$(zoxide init zsh)"
 fpath+=${ZDOTDIR:-~}/.zsh_functions
+alias cd="z"
+alias cdi="zi"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 autoload bashcompinit
 bashcompinit
 source /mnt/d/Workspace/cpp/vcpkg/scripts/vcpkg_completion.zsh
+

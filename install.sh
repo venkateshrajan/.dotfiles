@@ -1,27 +1,39 @@
 #!/usr/bin/env zsh
 
-# Alacritty
-rm -rf ~/.config/alacritty
-ln -s "$(pwd)/alacritty" ~/.config/alacritty
+declare -A mapsrctolink
+mapsrctolink=( 
+    "`pwd`/alacritty" ".config/alacritty" # Alacritty
+    "`pwd`/compton.conf" ".config/compton.conf"  # Compton
+    "`pwd`/i3" ".config/i3" # i3
+    "`pwd`/init.lua" ".config/nvim" #nvim
+    "`pwd`/.zshrc" ".zshrc" #zsh
+    "`pwd`/.tmux.conf" ".tmux.conf" #tmux
+)
 
-# compton
-rm -rf ~/.config/compton.conf
-ln -s "$(pwd)/compton.conf" ~/.config/compton.conf
+for k v ("${(@kv)mapsrctolink}") {
+    echo
+    if read -q "choice?Press Y/y to config $k -> `echo ~`/$v: "; then
+        echo
+        if [ ! -d "`echo ~`/.bkp/.config" ]; then
+            echo "Creating `echo ~`/.bkp/.config"
+            mkdir -p `echo ~`/.bkp/.config
+        fi
 
-# i3
-rm -rf ~/.config/i3
-ln -s "$(pwd)/i3" ~/.config/i3
+        if [ ! -d "`echo ~`/.bkp/$v" ] && [ ! -f "`echo ~`/.bkp/$v" ]; then
+            if [ -d "`echo ~`/$v" ] || [ -f "`echo ~`/$v" ]; then
+                echo "Backing up `echo ~`/$v"
+                mv "`echo ~`/$v" "`echo ~`/.bkp/$v"
+            fi
+        fi
 
-# nvim
-rm -rf ~/.config/nvim
-ln -s "$(pwd)/init.lua" ~/.config/nvim
+        ln -s "$k" "`echo ~`/$v"
+    fi
+}
 
-# ohmyzsh
-rm -rf ~/.zshrc
-ln -s "$(pwd)/.zshrc" ~/.zshrc
-source ~/.zshrc
+echo
+if read -q "choice?Press Y/y to source the configurations: "; then
+    source ~/.zshrc
+    tmux source ~/.tmux.conf
+fi
 
-#tmux
-rm -rf ~/.tmux.conf
-ln -s "$(pwd)/.tmux.conf" ~/.tmux.conf
-source ~/.tmux.conf
+echo
