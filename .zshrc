@@ -13,7 +13,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="simple"
+ZSH_THEME="amuse"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -75,7 +75,7 @@ ZSH_THEME="simple"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(copybuffer copyfile git history jsontools sudo web-search z zsh-autosuggestions)
+plugins=(copybuffer copyfile git history jsontools sudo vi-mode web-search z zsh-autosuggestions zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -107,8 +107,15 @@ source $ZSH/oh-my-zsh.sh
 alias ts="~/.dotfiles/scripts/tmux-session-finder.sh"
 alias ls="lsd"
 alias gd="~/.dotfiles/scripts/get-diff-names.sh"
-alias tsm='ssh `cat ~/.commvault/known_hosts | fzf -d , --with-nth 2 | cut -d, -f1` -t tmux a'
-alias sm='ssh `cat ~/.commvault/known_hosts | fzf -d , --with-nth 2 | cut -d, -f1`'
+
+if [[ -f "~/.commvault/known_hosts" ]]; then
+  alias tsm='ssh `cat ~/.commvault/known_hosts | fzf -d , --with-nth 2 | cut -d, -f1` -t tmux a'
+  alias sm='ssh `cat ~/.commvault/known_hosts | fzf -d , --with-nth 2 | cut -d, -f1`'
+fi
+
+if [[ -d "~/.config/NvChad" ]]; then
+  alias cvim="NVIM_APPNAME=NvChad nvim"
+fi
 
 unalias z
 eval "$(zoxide init zsh)"
