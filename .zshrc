@@ -104,18 +104,18 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+
+# General helpers
 alias ts="~/.dotfiles/scripts/tmux-session-finder.sh"
 alias ls="lsd"
 alias gd="~/.dotfiles/scripts/get-diff-names.sh"
 
-if [[ -f "~/.commvault/known_hosts" ]]; then
-  alias tsm='ssh `cat ~/.commvault/known_hosts | fzf -d , --with-nth 2 | cut -d, -f1` -t tmux a'
-  alias sm='ssh `cat ~/.commvault/known_hosts | fzf -d , --with-nth 2 | cut -d, -f1`'
-fi
+# Commvault
+alias tsm='ssh `cat ~/.commvault/known_hosts | fzf -d , --with-nth 2 | cut -d, -f1` -t tmux a'
+alias sm='ssh `cat ~/.commvault/known_hosts | fzf -d , --with-nth 2 | cut -d, -f1`'
 
-if [[ -d "~/.config/NvChad" ]]; then
-  alias cvim="NVIM_APPNAME=NvChad nvim"
-fi
+# nvim 
+alias vi="NVIM_APPNAME=NvChad_Venky nvim"
 
 unalias z
 eval "$(zoxide init zsh)"
