@@ -57,4 +57,13 @@ M.harpoon = {
   },
 }
 
+M.fugitive = {
+  n = {
+    ["<leader>gs"] = {
+      "<cmd> Git <CR>",
+      "Open Fugitive",
+    }
+  }
+}
+
 return M

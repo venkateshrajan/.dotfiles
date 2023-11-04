@@ -4,6 +4,10 @@ local plugins = {
     cmd = "Harpoon",
   },
   {
+    'tpope/vim-fugitive',
+    lazy = false,
+  },
+  {
     "rcarriga/nvim-dap-ui",
     event = "VeryLazy",
     dependencies = "mfussenegger/nvim-dap",
