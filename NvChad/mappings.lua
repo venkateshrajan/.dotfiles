@@ -1,5 +1,28 @@
 local M = {}
 
+M.disabled = {
+  i = {
+    -- go to  beginning and end
+    ["<C-b>"] = "",
+    ["<C-e>"] = "",
+
+    -- navigate within insert mode
+    ["<C-h>"] = "",
+    ["<C-l>"] = "",
+    ["<C-j>"] = "",
+    ["<C-k>"] = "",
+  },
+
+  n = {
+    ["<Esc>"] = "",
+    -- switch between windows
+    ["<C-h>"] = "",
+    ["<C-l>"] = "",
+    ["<C-j>"] = "",
+    ["<C-k>"] = "",
+  },
+}
+
 M.dap = {
   plugin = true,
 
@@ -18,37 +41,37 @@ M.dap = {
 
 M.harpoon = {
   n = {
-    ["<leader>ha"] = {
+    ["<leader>a"] = {
       function()
         require("harpoon.mark").add_file()
       end,
       "󱡁 Harpoon Add file",
     },
-    ["<leader>hb"] = {
+    ["<C-e>"] = {
       function()
         require("harpoon.ui").toggle_quick_menu()
       end,
       "󱠿 Harpoon Menu",
     },
-    ["<leader>1"] = {
+    ["<C-h>"] = {
       function()
         require("harpoon.ui").nav_file(1)
       end,
       "󱪼 Navigate to file 1",
     },
-    ["<leader>2"] = {
+    ["<C-j>"] = {
       function()
         require("harpoon.ui").nav_file(2)
       end,
       "󱪽 Navigate to file 2",
     },
-    ["<leader>3"] = {
+    ["<C-k>"] = {
       function()
         require("harpoon.ui").nav_file(3)
       end,
       "󱪾 Navigate to file 3",
     },
-    ["<leader>4"] = {
+    ["<C-l>"] = {
       function()
         require("harpoon.ui").nav_file(4)
       end,
