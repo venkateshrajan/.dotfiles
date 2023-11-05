@@ -70,9 +70,17 @@ local plugins = {
     "williamboman/mason.nvim",
     opts = {
       ensure_installed = {
+        "buf-language-server",
         "clangd",
         "clang-format",
+        "cmake-lint",
+        "cmake-language-server",
+        "cmakelang",
         "codelldb",
+        "json-lsp",
+        "lua-language-server",
+        "prettier",
+        "protolint",
       },
     },
   },
