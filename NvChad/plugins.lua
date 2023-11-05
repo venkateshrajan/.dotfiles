@@ -71,10 +71,10 @@ local plugins = {
     opts = {
       ensure_installed = {
         "buf-language-server",
-        "clangd",
         "clang-format",
-        "cmake-lint",
+        "clangd",
         "cmake-language-server",
+        "cmake-lint",
         "cmakelang",
         "codelldb",
         "json-lsp",
