@@ -31,3 +31,8 @@ lspconfig.cmake.setup {
   init_options = { buildDirectory = "build" },
   root_dir = lspconfig.util.root_pattern('CMakePresets.json', "CTestConfig.cmake", '.git', 'build', 'cmake')
 }
+
+lspconfig.emmet_language_server.setup {
+  on_attach = on_attach,
+  capabilities = capabilities
+}
