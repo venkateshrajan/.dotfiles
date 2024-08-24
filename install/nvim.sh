@@ -18,7 +18,7 @@ do
 done
 
 # install the packages which are not installed already
-for pkg in "$pkgs_not_available[@]"
+for pkg in "${pkgs_not_available[@]}"
 do
   apt install "$pkg"
 done
