@@ -42,7 +42,7 @@ declare osid=`get_os_id`
 
 case "$osid" in
   "ubuntu")
-    install_ubuntu
+    install_ubuntu ;;
   "rocky")
-    install_rocky
+    install_rocky ;;
 esac
