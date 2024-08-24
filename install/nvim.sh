@@ -6,9 +6,10 @@ check_if_installed() {
 }
 
 get_os_id() {
-  cat /etc/os-release | grep -w "ID" | awk 'BEGIN {FS="="} {print $2}'
+  cat /etc/os-release | grep -w "ID" | awk 'BEGIN {FS="="} {print $2}' | tr -d '"'
 }
 
+# OS depended installation commands
 install_ubuntu() {
   # Check if required packages are installed.
   declare -a required_packages=("sudo" "curl")
@@ -34,7 +35,7 @@ install_ubuntu() {
 }
 
 install_rocky() {
-  echo "Not supported on rocky"
+  echo "Coming soon"
 }
 
 # Check the OS type
@@ -45,4 +46,6 @@ case "$osid" in
     install_ubuntu ;;
   "rocky")
     install_rocky ;;
+  *)
+    echo "Unsupported OS type" ;;
 esac
