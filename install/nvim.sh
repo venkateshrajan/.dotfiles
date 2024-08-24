@@ -18,10 +18,7 @@ do
 done
 
 # install the packages which are not installed already
-for pkg in "${pkgs_not_available[@]}"
-do
-  apt install "$pkg"
-done
+apt install "${pkgs_not_available[@]}"
 
 #Refer https://github.com/neovim/neovim/blob/master/INSTALL.md
 curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
