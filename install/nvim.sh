@@ -16,7 +16,7 @@ get_os_id() {
 # OS depended installation commands
 install_ubuntu() {
   # Check if required packages are installed.
-  declare -a required_packages=("sudo" "curl" "ripgrep" "node" 
+  declare -a required_packages=("sudo" "curl" "ripgrep" 
       "yarn" "npm" "perl" "python3" "ruby" "gem")
   declare -a pkgs_not_available=()
   for pkg in "${required_packages[@]}"
