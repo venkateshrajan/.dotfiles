@@ -20,7 +20,7 @@ install_ubuntu() {
   declare -a pkgs_not_available=()
   for pkg in "${required_packages[@]}"
   do
-    if [ `check_if_installed_ubuntu "$pkg" 2> /dev/null` != 0 ] 
+    if [ `check_if_installed_ubuntu "$pkg" 2> /dev/null` == 0 ] 
     then
       pkgs_not_available+=("$pkg")
     fi
