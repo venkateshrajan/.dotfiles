@@ -154,6 +154,8 @@ case "$osid" in
     install_debian ;;
   "rocky")
     install_rocky ;;
+  "fedora")
+    install_rocky ;;
   *)
     echo "Unsupported OS id: $osid" ;;
 esac
