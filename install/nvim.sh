@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Common variables
-declare -a required_packages=("sudo" "curl" "ripgrep" 
-    "yarn" "npm" "nodejs" "perl" "python3" "ruby-dev" "gem")
 
 # Utility functions
 check_if_installed_ubuntu() {
@@ -67,10 +64,15 @@ nvim_providers_install() {
   # cpanm -n Neovim:Ext
 }
 
-
+#####################################
 # OS depended installation commands
+#####################################
+
+# Debian
 install_debian() {
   # Check if required packages are installed.
+  declare -a required_packages_debian=("sudo" "curl" "ripgrep" 
+    "yarn" "npm" "nodejs" "perl" "python3" "ruby-dev" "gem")
   declare -a pkgs_not_available=()
   for pkg in "${required_packages[@]}"
   do
@@ -81,7 +83,7 @@ install_debian() {
   done
 
   # Install the packages which are not installed already
-  apt install "${pkgs_not_available[@]}" -y
+  sudo apt install "${pkgs_not_available[@]}" -y
 
   # Install nvim
   local nvim_path=$(nvim_install ~/.venky)
@@ -95,6 +97,8 @@ install_debian() {
 
 install_rocky() {
   # Check if required packages are installed.
+  declare -a required_packages=("sudo" "curl" "ripgrep" 
+    "yarn" "npm" "nodejs" "perl" "python3" "ruby-dev" "gem")
   declare -a pkgs_not_available=()
   for pkg in "${required_packages[@]}"
   do
@@ -105,7 +109,11 @@ install_rocky() {
   done
 
   # Install the packages which are not installed already
-  yum install "${pkgs_not_available[@]}" -y
+  if "$#{pkgs_not_available[@]}" -gt 0; then
+    sudo dnf install -y epel-release
+    sudo dnf upgrade
+    sudo dnf install "${pkgs_not_available[@]}" -y
+  fi
 
   # Install nvim
   local nvim_path=$(nvim_install ~/.venky)
