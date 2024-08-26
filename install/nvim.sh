@@ -1,5 +1,9 @@
 #!/bin/bash
 
+exec 5> /tmp/nvim.venky.log
+BASH_XTRACEFD="5"
+PS4='$LINENO: '
+set -x
 
 # Utility functions
 check_if_installed_ubuntu() {
