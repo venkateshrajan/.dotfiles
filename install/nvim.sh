@@ -78,7 +78,7 @@ install_debian() {
   declare -a required_packages_debian=("sudo" "curl" "ripgrep" 
     "yarn" "npm" "nodejs" "perl" "python3" "ruby-dev" "gem")
   declare -a pkgs_not_available=()
-  for pkg in "${required_packages[@]}"
+  for pkg in "${required_packages_debian[@]}"
   do
     if [ `check_if_installed_ubuntu "$pkg" 2> /dev/null` == 0 ] 
     then
