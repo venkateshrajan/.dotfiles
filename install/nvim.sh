@@ -121,7 +121,7 @@ install_rocky() {
   nvim_providers_install
 
   # Post installation message
-  post_install_cmd
+  post_install_cmd $nvim_path
 }
 
 # Check the OS type
