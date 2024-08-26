@@ -14,7 +14,7 @@ get_os_id() {
 }
 
 # OS depended installation commands
-install_ubuntu() {
+install_debian() {
   # Check if required packages are installed.
   declare -a required_packages=("sudo" "curl" "ripgrep" 
       "yarn" "npm" "perl" "python3" "ruby-dev" "gem")
@@ -98,9 +98,9 @@ declare osid=`get_os_id`
 
 case "$osid" in
   "ubuntu")
-    install_ubuntu ;;
+    install_debian ;;
   "debian")
-    install_ubuntu ;;
+    install_debian ;;
   "rocky")
     install_rocky ;;
   *)
