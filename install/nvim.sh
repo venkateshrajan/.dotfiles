@@ -127,10 +127,10 @@ install_rocky() {
   if (( ${#pkgs_not_available[@]} )); then
     if [[ " ${pkgs_not_available[*]} " =~ [[:space:]]sudo[[:space:]] ]]; then
       dnf install -y epel-release --assumeyes
-      dnf install --assumeyes "${pkgs_not_available[@]}"
+      dnf install --assumeyes "${pkgs_not_available[@]}" --skip-broken
     else
       sudo dnf install -y epel-release --assumeyes
-      sudo dnf install --assumeyes "${pkgs_not_available[@]}"
+      sudo dnf install --assumeyes "${pkgs_not_available[@]}" --skip-broken
     fi
   fi
 
