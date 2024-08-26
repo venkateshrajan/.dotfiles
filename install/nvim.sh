@@ -109,7 +109,7 @@ install_rocky() {
   done
 
   # Install the packages which are not installed already
-  if ${#pkgs_not_available[@]} -gt 0; then
+  if [${#pkgs_not_available[@]} -ne 0]; then
     sudo dnf install -y epel-release
     sudo dnf upgrade
     sudo dnf install "${pkgs_not_available[@]}" -y
