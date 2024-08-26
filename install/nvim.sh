@@ -68,8 +68,10 @@ declare osid=`get_os_id`
 case "$osid" in
   "ubuntu")
     install_ubuntu ;;
+  "debian")
+    install_ubuntu ;;
   "rocky")
     install_rocky ;;
   *)
-    echo "Unsupported OS type" ;;
+    echo "Unsupported OS id: $osid" ;;
 esac
