@@ -20,11 +20,19 @@ get_os_id() {
 
 nvim_install() {
   # Refer https://github.com/neovim/neovim/blob/master/INSTALL.md
-  curl -LO https://github.com/neovim/neovim/releases/download/stable/nvim.appimage --output-dir ~/.venky
+  declare dir_venky=$1
+  if [ ! -d $dir_venky ]; then
+    mkdir $dir_venky
+  fi
+  if [ -f "$dir_venky/nvim.appimage" ]; then
+    rm "$dir_venky/nvim.appimage"
+    rm -rf "$dir_venky/squashfs-root"
+  fi
+  curl -LO https://github.com/neovim/neovim/releases/download/stable/nvim.appimage --output-dir $dir_venky
   chmod u+x nvim.appimage && ./nvim.appimage
-  if [$? == 1] then
-    ~/.venky/nvim.appimage --appimage-extract ;
-    $nvim_path="~/.venky/squashfs-root/usr/bin" ;
+  if [$? == 1]; then
+    "$dir_venky/nvim.appimage" --appimage-extract
+    $nvim_path="$dir_venky/squashfs-root/usr/bin"
   fi
 }
 
@@ -65,7 +73,7 @@ install_debian() {
   apt install "${pkgs_not_available[@]}" -y
 
   # Install nvim
-  nvim_install
+  nvim_install ~/.venky
 
   # Install providers
   nvim_providers_install
@@ -89,7 +97,7 @@ install_rocky() {
   yum install "${pkgs_not_available[@]}" -y
 
   # Install nvim
-  nvim_install
+  nvim_install ~/.venky
 
   # Install providers
   nvim_providers_install
