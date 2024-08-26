@@ -87,7 +87,13 @@ install_debian() {
   done
 
   # Install the packages which are not installed already
-  apt install "${pkgs_not_available[@]}" -y
+  if (( ${#pkgs_not_available[@]} )); then
+    if [[ " ${pkgs_not_available[*]} " =~ [[:space:]]sudo[[:space:]] ]]; then
+      apt install "${pkgs_not_available[@]}" -y
+    else
+      sudo apt install "${pkgs_not_available[@]}" -y
+    fi
+  fi
 
   # Install nvim
   local nvim_path=$(nvim_install ~/.venky)
@@ -114,8 +120,13 @@ install_rocky() {
 
   # Install the packages which are not installed already
   if (( ${#pkgs_not_available[@]} )); then
-    sudo dnf install -y epel-release --assumeyes
-    sudo dnf install --assumeyes "${pkgs_not_available[@]}"
+    if [[ " ${pkgs_not_available[*]} " =~ [[:space:]]sudo[[:space:]] ]]; then
+      dnf install -y epel-release --assumeyes
+      dnf install --assumeyes "${pkgs_not_available[@]}"
+    else
+      sudo dnf install -y epel-release --assumeyes
+      sudo dnf install --assumeyes "${pkgs_not_available[@]}"
+    fi
   fi
 
   # Install nvim
