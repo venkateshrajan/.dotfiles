@@ -83,9 +83,7 @@ install_debian() {
   done
 
   # Install the packages which are not installed already
-  if (( ${#pkgs_not_available[@]} )); then
-      apt install "${pkgs_not_available[@]}" -y
-  fi
+  apt install "${pkgs_not_available[@]}" -y
 
   # Install nvim
   local nvim_path=$(nvim_install ~/.venky)
