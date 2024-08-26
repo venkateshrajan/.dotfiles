@@ -113,7 +113,7 @@ install_debian() {
 install_rocky() {
   # Check if required packages are installed.
   declare -a required_packages=("sudo" "curl" "ripgrep" 
-     "npm" "nodejs" "perl" "python3" "ruby" "gem")
+     "npm" "nodejs" "perl" "python3" "ruby" "ruby-devel" "gem")
   declare -a pkgs_not_available=()
   for pkg in "${required_packages[@]}"
   do
