@@ -3,7 +3,6 @@
 # Common variables
 declare -a required_packages=("sudo" "curl" "ripgrep" 
     "yarn" "npm" "nodejs" "perl" "python3" "ruby-dev" "gem")
-declare nvim_path=/opt/nvim-linux64/bin 
 
 # Utility functions
 check_if_installed_ubuntu() {
@@ -20,7 +19,8 @@ get_os_id() {
 
 nvim_install() {
   # Refer https://github.com/neovim/neovim/blob/master/INSTALL.md
-  declare dir_venky=$1
+  local dir_venky=$1
+  local nvim_path="/opt/nvim-linux64/bin"
   if [ ! -d $dir_venky ]; then
     mkdir $dir_venky
   fi
@@ -29,15 +29,17 @@ nvim_install() {
     rm -rf "$dir_venky/squashfs-root"
   fi
   curl -LO https://github.com/neovim/neovim/releases/download/stable/nvim.appimage --output-dir $dir_venky
-  if [! `chmod u+x "$dir_venky/nvim.appimage"` && "$dir_venky/nvim.appimage"]; then
-    echo "nvim.sh: Using --appimage-extract"
-    "$dir_venky/nvim.appimage" --appimage-extract
-    $nvim_path="$dir_venky/squashfs-root/usr/bin"
+  chmod u+x "$dir_venky/nvim.appimage" 
+  if ! "$dir_venky/nvim.appimage" &> /dev/null; then
+    "$dir_venky/nvim.appimage" --appimage-extract &> /dev/null
+    echo "$dir_venky/squashfs-root/usr/bin"
+  else
+    echo $nvim_path
   fi
 }
 
 post_install_cmd() {
-  echo "Please run : echo 'export PATH=\"$PATH:$nvim_path\"' >> ~/.bashrc && source ~/.bashrc"
+  echo "Please run : echo 'export PATH=\"$PATH:$1\"' >> ~/.bashrc && source ~/.bashrc"
 }
 
 nvim_providers_install() {
@@ -73,13 +75,13 @@ install_debian() {
   apt install "${pkgs_not_available[@]}" -y
 
   # Install nvim
-  nvim_install ~/.venky
+  local $nvim_path=`nvim_install ~/.venky`
 
   # Install providers
   nvim_providers_install
 
   # Post installation message
-  post_install_cmd
+  post_install_cmd $nvim_path
 }
 
 install_rocky() {
