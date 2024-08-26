@@ -32,9 +32,9 @@ nvim_install() {
   chmod u+x "$dir_venky/nvim.appimage" 
   if ! "$dir_venky/nvim.appimage" &> /dev/null; then
     "$dir_venky/nvim.appimage" --appimage-extract &> /dev/null
-    echo "$dir_venky/squashfs-root/usr/bin"
+    eval '$2="$dir_venky/squashfs-root/usr/bin"'
   else
-    echo $nvim_path
+    eval '$2=$nvim_path'
   fi
 }
 
@@ -75,7 +75,8 @@ install_debian() {
   apt install "${pkgs_not_available[@]}" -y
 
   # Install nvim
-  local $nvim_path=`nvim_install ~/.venky`
+  local $nvim_path=""
+  nvim_install ~/.venky $nvim_path
 
   # Install providers
   nvim_providers_install
