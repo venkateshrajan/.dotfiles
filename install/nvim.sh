@@ -90,13 +90,13 @@ nvim_install_old_wrapper() {
 }
 
 post_install_cmd() {
-  echo "Please run : echo 'export PATH=\"$PATH:$1\"' >> ~/.bashrc && source ~/.bashrc"
+  echo "Please run : echo 'export PATH=\"$PATH:$1\"' >> $HOME/.bashrc && source $HOME/.bashrc"
 }
 
 nvim_providers_install() {
   # Python provider
-  # python3 -m venv ~/.venky
-  # source ~/.venky/bin/activate
+  # python3 -m venv $HOME/.venky
+  # source $HOME/.venky/bin/activate
   # python3 -m pip install --user --upgrade pynvim
 
   # node provider
@@ -137,7 +137,7 @@ install_debian() {
   fi
 
   # Install nvim
-  local nvim_path=$(nvim_install ~/.venky)
+  local nvim_path=$(nvim_install $HOME/.venky)
 
   # Install providers
   nvim_providers_install
@@ -171,7 +171,7 @@ install_fedora() {
   fi
 
   # Install nvim
-  local nvim_path=$(nvim_install ~/.venky)
+  local nvim_path=$(nvim_install $HOME/.venky)
 
   # Install providers
   nvim_providers_install
@@ -205,7 +205,7 @@ install_fedora_old() {
   fi
 
   # Install nvim
-  local nvim_path=$(nvim_install_old_wrapper ~/.venky)
+  local nvim_path=$(nvim_install_old_wrapper $HOME/.venky)
 
   # Install providers
   nvim_providers_install
