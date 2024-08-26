@@ -17,27 +17,33 @@ get_os_id() {
   cat /etc/os-release | grep -w "ID" | awk 'BEGIN {FS="="} {print $2}' | tr -d '"'
 }
 
-nvim_install() {
+nvim_install_core() {
   # Refer https://github.com/neovim/neovim/blob/master/INSTALL.md
-  local dir_venky=$1
   local nvim_path="/opt/nvim-linux64/bin"
-  if [ ! -d $dir_venky ]; then
-    mkdir $dir_venky
-  fi
-  if [ -f "$dir_venky/nvim.appimage" ]; then
-    rm "$dir_venky/nvim.appimage"
-    rm -rf "$dir_venky/squashfs-root"
-  fi
-  local cur_dir=`pwd`
-  cd $dir_venky
   curl -LO https://github.com/neovim/neovim/releases/download/stable/nvim.appimage
   chmod u+x ./nvim.appimage
-  if ! ./nvim.appimage 1> /dev/null; then
+  if ! ./nvim.appimage &> /dev/null; then
     ./nvim.appimage --appimage-extract &> /dev/null
-    echo "$dir_venky/squashfs-root/usr/bin"
+    echo "$1/squashfs-root/usr/bin"
   else
     echo $nvim_path
   fi
+}
+
+nvim_install() {
+  # Prepare the destination directory
+  local install_dir=$1
+  if [ ! -d $install_dir ]; then
+    mkdir $install_dir
+  fi
+  if [ -f "$install_dir/nvim.appimage" ]; then
+    rm "$install_dir/nvim.appimage"
+    rm -rf "$install_dir/squashfs-root"
+  fi
+  # Install nvim
+  local cur_dir=`pwd`
+  cd $install_dir
+  echo "$(nvim_install_core $install_dir)"
   cd $cur_dir
 }
 
