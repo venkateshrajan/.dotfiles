@@ -36,15 +36,22 @@ install_ubuntu() {
   sudo tar -C /opt -xzf nvim-linux64.tar.gz
 
   # Install providers
-  python3 -m venv ~/.venky
-  source ~/.venky/bin/activate
-  python3 -m pip install --user --upgrade pynvim
-  npm install -g neovim
-  gem install neovim
-  cpan -i Neovim:Ext
 
-  echo 'export PATH="$PATH:/opt/nvim-linux64/bin"' >> ~/.bashrc
-  echo "Please run 'source ~/.bashrc'"
+  # Python provider
+  # python3 -m venv ~/.venky
+  # source ~/.venky/bin/activate
+  # python3 -m pip install --user --upgrade pynvim
+
+  # node provider
+  npm install -g neovim
+
+  # ruby provider
+  gem install neovim
+
+  #Perl provider
+  # cpanm -n Neovim:Ext
+
+  echo "Please run : echo 'export PATH=\"$PATH:/opt/nvim-linux64/bin\"' >> ~/.bashrc && source ~/.bashrc"
 }
 
 install_rocky() {
@@ -60,15 +67,30 @@ install_rocky() {
   done
 
   # Install the packages which are not installed already
-  yum install "${pkgs_not_available[@]}"
+  yum install "${pkgs_not_available[@]}" -y
 
   # Refer https://github.com/neovim/neovim/blob/master/INSTALL.md
   curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
   sudo rm -rf /opt/nvim
   sudo tar -C /opt -xzf nvim-linux64.tar.gz
 
-  echo 'export PATH="$PATH:/opt/nvim-linux64/bin"' >> ~/.bashrc
-  echo "Please run 'source ~/.bashrc'"
+  # Install providers
+
+  # Python provider
+  # python3 -m venv ~/.venky
+  # source ~/.venky/bin/activate
+  # python3 -m pip install --user --upgrade pynvim
+
+  # node provider
+  npm install -g neovim
+
+  # ruby provider
+  gem install neovim
+
+  #Perl provider
+  # cpanm -n Neovim:Ext
+
+  echo "Please run : echo 'export PATH=\"$PATH:/opt/nvim-linux64/bin\"' >> ~/.bashrc && source ~/.bashrc"
 }
 
 # Check the OS type
