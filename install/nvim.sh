@@ -98,7 +98,7 @@ install_debian() {
 install_rocky() {
   # Check if required packages are installed.
   declare -a required_packages=("sudo" "curl" "ripgrep" 
-    "yarn" "npm" "nodejs" "perl" "python3" "ruby-dev" "gem")
+     "npm" "nodejs" "perl" "python3" "ruby" "gem")
   declare -a pkgs_not_available=()
   for pkg in "${required_packages[@]}"
   do
@@ -109,10 +109,10 @@ install_rocky() {
   done
 
   # Install the packages which are not installed already
-  if [${#pkgs_not_available[@]} -ne 0]; then
-    sudo dnf install -y epel-release
-    sudo dnf upgrade
-    sudo dnf install "${pkgs_not_available[@]}" -y
+  if (( ${#pkgs_not_available[@]} )); then
+    sudo dnf install -y epel-release --assumeyes
+    sudo dnf upgrade --assumeyes
+    sudo dnf install --assumeyes "${pkgs_not_available[@]}"
   fi
 
   # Install nvim
