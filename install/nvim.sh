@@ -35,6 +35,12 @@ install_ubuntu() {
   sudo rm -rf /opt/nvim
   sudo tar -C /opt -xzf nvim-linux64.tar.gz
 
+  # Install providers
+  npm install -g neovim
+  gem install neovim
+  python3 -m pip install --user --upgrade pynvim
+  cpanm -n Neovim:Ext
+
   echo 'export PATH="$PATH:/opt/nvim-linux64/bin"' >> ~/.bashrc
   echo "Please run 'source ~/.bashrc'"
 }
