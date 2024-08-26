@@ -111,7 +111,6 @@ install_rocky() {
   # Install the packages which are not installed already
   if (( ${#pkgs_not_available[@]} )); then
     sudo dnf install -y epel-release --assumeyes
-    sudo dnf upgrade --assumeyes
     sudo dnf install --assumeyes "${pkgs_not_available[@]}"
   fi
 
