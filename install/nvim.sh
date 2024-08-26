@@ -55,10 +55,10 @@ nvim_providers_install() {
   # python3 -m pip install --user --upgrade pynvim
 
   # node provider
-  npm install -g neovim
+  sudo npm install -g neovim
 
   # ruby provider
-  gem install neovim
+  sudo gem install neovim
 
   #Perl provider
   # cpanm -n Neovim:Ext
