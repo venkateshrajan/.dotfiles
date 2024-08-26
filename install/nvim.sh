@@ -5,6 +5,11 @@ BASH_XTRACEFD="5"
 PS4='$LINENO: '
 set -x
 
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root"
+  exit
+fi
+
 # Utility functions
 check_if_installed_ubuntu() {
   dpkg -l $1 | grep $1 | awk '{ print $2 }' | wc -l
@@ -59,10 +64,10 @@ nvim_providers_install() {
   # python3 -m pip install --user --upgrade pynvim
 
   # node provider
-  sudo npm install -g neovim
+  npm install -g neovim
 
   # ruby provider
-  sudo gem install neovim
+  gem install neovim
 
   #Perl provider
   # cpanm -n Neovim:Ext
