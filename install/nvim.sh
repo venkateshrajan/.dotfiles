@@ -23,10 +23,29 @@ get_os_id() {
   cat /etc/os-release | grep -w "ID" | awk 'BEGIN {FS="="} {print $2}' | tr -d '"'
 }
 
-nvim_install_core() {
+get_os_version_id() {
+  cat /etc/os-release | grep -w "VERSION_ID" | 
+    awk 'BEGIN {FS="="} {print $2}' | tr -d '"' |
+    awk 'BEGIN {FS="."} {print $1}' 
+}
+
+nvim_install_release() {
   # Refer https://github.com/neovim/neovim/blob/master/INSTALL.md
   local nvim_path="/opt/nvim-linux64/bin"
   curl -LO https://github.com/neovim/neovim/releases/download/stable/nvim.appimage
+  chmod u+x ./nvim.appimage
+  if ! ./nvim.appimage &> /dev/null; then
+    ./nvim.appimage --appimage-extract &> /dev/null
+    echo "$1/squashfs-root/usr/bin"
+  else
+    echo $nvim_path
+  fi
+}
+
+nvim_install_old() {
+  # Refer https://github.com/neovim/neovim/blob/master/INSTALL.md
+  local nvim_path="/opt/nvim-linux64/bin"
+  curl -LO https://github.com/neovim/neovim/releases/download/v0.9.5/nvim.appimage
   chmod u+x ./nvim.appimage
   if ! ./nvim.appimage &> /dev/null; then
     ./nvim.appimage --appimage-extract &> /dev/null
@@ -49,7 +68,7 @@ nvim_install() {
   # Install nvim
   local cur_dir=`pwd`
   cd $install_dir
-  echo "$(nvim_install_core $install_dir)"
+  echo "$(nvim_install_release $install_dir)"
   cd $cur_dir
 }
 
@@ -110,7 +129,7 @@ install_debian() {
   post_install_cmd $nvim_path
 }
 
-install_rocky() {
+install_fedora() {
   # Check if required packages are installed.
   declare -a required_packages=("sudo" "curl" "ripgrep" 
      "npm" "nodejs" "perl" "python3" "ruby" "ruby-devel" "gem" "gcc")
@@ -144,6 +163,49 @@ install_rocky() {
   post_install_cmd $nvim_path
 }
 
+install_fedora_old() {
+  # Check if required packages are installed.
+  declare -a required_packages=("sudo" "curl" "ripgrep" 
+     "npm" "nodejs" "perl" "python3" "ruby" "ruby-devel" "gem" "gcc")
+  declare -a pkgs_not_available=()
+  for pkg in "${required_packages[@]}"
+  do
+    if [ `check_if_installed_rocky "$pkg" 2> /dev/null` == 0 ] 
+    then
+      pkgs_not_available+=("$pkg")
+    fi
+  done
+
+  # Install the packages which are not installed already
+  if (( ${#pkgs_not_available[@]} )); then
+    if [[ " ${pkgs_not_available[*]} " =~ [[:space:]]sudo[[:space:]] ]]; then
+      dnf install -y epel-release --assumeyes
+      dnf install --assumeyes "${pkgs_not_available[@]}" --skip-broken
+    else
+      sudo dnf install -y epel-release --assumeyes
+      sudo dnf install --assumeyes "${pkgs_not_available[@]}" --skip-broken
+    fi
+  fi
+
+  # Install nvim
+  local nvim_path=$(nvim_install_old ~/.venky)
+
+  # Install providers
+  nvim_providers_install
+
+  # Post installation message
+  post_install_cmd $nvim_path
+}
+
+install_rocky() {
+  declare versionid=`get_os_version_id`
+  if [ "$versionid" -ne 8 ]
+  then install_fedora
+  else
+    install_fedora_old
+  fi
+}
+
 # Check the OS type
 declare osid=`get_os_id`
 
@@ -155,9 +217,9 @@ case "$osid" in
   "rocky")
     install_rocky ;;
   "fedora")
-    install_rocky ;;
+    install_fedora ;;
   "centos")
-    install_rocky ;;
+    install_fedora_old ;;
   *)
     echo "Unsupported OS id: $osid" ;;
 esac
