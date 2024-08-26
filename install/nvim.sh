@@ -84,11 +84,7 @@ install_debian() {
 
   # Install the packages which are not installed already
   if (( ${#pkgs_not_available[@]} )); then
-    if [[ " ${pkgs_not_available[*]} " =~ [[:space:]]sudo[[:space:]] ]]; then
       apt install "${pkgs_not_available[@]}" -y
-    else
-      sudo apt install "${pkgs_not_available[@]}" -y
-    fi
   fi
 
   # Install nvim
