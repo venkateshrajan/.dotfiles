@@ -72,6 +72,23 @@ nvim_install() {
   cd $cur_dir
 }
 
+nvim_install_old_wrapper() {
+  # Prepare the destination directory
+  local install_dir=$1
+  if [ ! -d $install_dir ]; then
+    mkdir $install_dir
+  fi
+  if [ -f "$install_dir/nvim.appimage" ]; then
+    rm "$install_dir/nvim.appimage"
+    rm -rf "$install_dir/squashfs-root"
+  fi
+  # Install nvim
+  local cur_dir=`pwd`
+  cd $install_dir
+  echo "$(nvim_install_old $install_dir)"
+  cd $cur_dir
+}
+
 post_install_cmd() {
   echo "Please run : echo 'export PATH=\"$PATH:$1\"' >> ~/.bashrc && source ~/.bashrc"
 }
@@ -188,7 +205,7 @@ install_fedora_old() {
   fi
 
   # Install nvim
-  local nvim_path=$(nvim_install_old ~/.venky)
+  local nvim_path=$(nvim_install_old_wrapper ~/.venky)
 
   # Install providers
   nvim_providers_install
