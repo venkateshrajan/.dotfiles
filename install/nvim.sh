@@ -29,7 +29,7 @@ nvim_install() {
     rm -rf "$dir_venky/squashfs-root"
   fi
   curl -LO https://github.com/neovim/neovim/releases/download/stable/nvim.appimage --output-dir $dir_venky
-  if [chmod u+x "$dir_venky/nvim.appimage" && "$dir_venky/nvim.appimage" == 1]; then
+  if [! `chmod u+x "$dir_venky/nvim.appimage"` && "$dir_venky/nvim.appimage"]; then
     echo "nvim.sh: Using --appimage-extract"
     "$dir_venky/nvim.appimage" --appimage-extract
     $nvim_path="$dir_venky/squashfs-root/usr/bin"
