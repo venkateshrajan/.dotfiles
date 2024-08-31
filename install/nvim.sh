@@ -10,7 +10,7 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
-$scripts_dir="$(dirname "$0"")"
+scripts_dir="${0%/*}"
 source "$scripts_dir/utils.sh"
 
 ###############################################################################
