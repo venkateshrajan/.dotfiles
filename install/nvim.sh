@@ -32,9 +32,9 @@ get_os_version_id() {
 nvim_download() {
   # Refer https://github.com/neovim/neovim/blob/master/INSTALL.md
   local nvim_path="/opt/nvim-linux64/bin"
-  local download_url = "https://github.com/neovim/neovim/releases/download/stable/nvim.appimage"
+  local download_url="https://github.com/neovim/neovim/releases/download/stable/nvim.appimage"
   if [ "$2" -ne "0" ]; then 
-    download_url = "https://github.com/neovim/neovim/releases/download/v0.9.5/nvim.appimage";
+    $download_url="https://github.com/neovim/neovim/releases/download/v0.9.5/nvim.appimage"
   fi
 
   curl -LO "$download_url"
