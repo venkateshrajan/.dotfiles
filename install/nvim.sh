@@ -10,25 +10,20 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
-# Utility functions
-check_if_installed_ubuntu() {
-  dpkg -l $1 | grep $1 | awk '{ print $2 }' | wc -l
-}
+$scripts_dir="$(dirname "$0"")"
+source "$scripts_dir/utils.sh"
 
-check_if_installed_rocky() {
-  rpm -qa | grep -w $1 | aws 'BEGIN {FS="-"} {print $1}' | wc -l
-}
-
-get_os_id() {
-  cat /etc/os-release | grep -w "ID" | awk 'BEGIN {FS="="} {print $2}' | tr -d '"'
-}
-
-get_os_version_id() {
-  cat /etc/os-release | grep -w "VERSION_ID" | 
-    awk 'BEGIN {FS="="} {print $2}' | tr -d '"' |
-    awk 'BEGIN {FS="."} {print $1}' 
-}
-
+###############################################################################
+# Description: Downloads the nvim appimage and extracts it
+#
+# Arguments:
+#  $1: Install directory
+#  $2: Indicates if it needs to download the stable version or old version
+#     If 0, then we download the stable version
+#     else, we download version 0.9.5 as it is the latest that works on GLIBC2.28
+#
+# Returns: the path where we extracted the nvim.appimage
+###############################################################################
 nvim_download() {
   # Refer https://github.com/neovim/neovim/blob/master/INSTALL.md
   local nvim_path="/opt/nvim-linux64/bin"
@@ -47,6 +42,17 @@ nvim_download() {
   fi
 }
 
+###############################################################################
+# Description: Prepares the destination directory and installs nvim
+#
+# Arguments:
+#   $1: Install directory
+#   $2: Indicates if it needs to download the stable version or old version
+#     If 0, then we download the stable version
+#     else, we download version 0.9.5 as it is the latest that works on GLIBC2.28
+#
+# Returns: Nothing
+###############################################################################
 nvim_install() {
   # Prepare the destination directory
   local install_dir=$1
@@ -64,10 +70,25 @@ nvim_install() {
   cd $cur_dir
 }
 
+###############################################################################
+# Description: Post installation operations
+#
+# Arguments:
+#   $1: Nvim executable path
+#
+# Returns: Nothing
+###############################################################################
 post_install_cmd() {
   echo "Please run : echo 'export PATH=\"$PATH:$1\"' >> $HOME/.bashrc && source $HOME/.bashrc"
 }
 
+###############################################################################
+# Description: Installs various nvim providers
+#
+# Arguments: Nothing
+#
+# Returns: Nothing
+###############################################################################
 nvim_providers_install() {
   # Python provider
   # python3 -m venv $HOME/.venky
@@ -88,7 +109,13 @@ nvim_providers_install() {
 # OS depended installation commands
 #####################################
 
-# Debian
+###############################################################################
+# Description: Installs nvim on debian
+#
+# Arguments: Nothing
+#
+# Returns: Nothing
+###############################################################################
 install_debian() {
   # Check if required packages are installed.
   declare -a required_packages_debian=("sudo" "curl" "ripgrep" 
@@ -121,6 +148,16 @@ install_debian() {
   post_install_cmd $nvim_path
 }
 
+###############################################################################
+# Description: Installs nvim on fedora
+#
+# Arguments:
+#   $1: Indicates if it needs to download the stable version or old version
+#     If 0, then we download the stable version
+#     else, we download version 0.9.5 as it is the latest that works on GLIBC2.28
+#
+# Returns: Nothing
+###############################################################################
 install_fedora() {
   # Check if required packages are installed.
   declare -a required_packages=("sudo" "curl" "ripgrep" 
@@ -155,6 +192,13 @@ install_fedora() {
   post_install_cmd $nvim_path
 }
 
+###############################################################################
+# Description: Prepares the destination directory and installs nvim
+#
+# Arguments: Nothing
+#
+# Returns: Nothing
+###############################################################################
 install_rocky() {
   declare versionid=`get_os_version_id`
   if [ "$versionid" -ne 8 ]
