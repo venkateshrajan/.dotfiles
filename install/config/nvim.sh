@@ -1,7 +1,13 @@
 #!/bin/bash
 
 config_dir="${0%/*}"
+
+if [ -d "`echo ~`/.config/NvChad_Venky" ]; then
+  echo "Updating NvChad"
+  rm -rf "`echo ~`/.config/NvChad_Venky"
+fi
 git clone https://github.com/NvChad/NvChad ~/.config/NvChad_Venky
+
 if [ -d "`echo ~`/.config/NvChad_Venky/lua/custom" ]; then
   echo "patching NvChad custom folder"
   rm -rf "`echo ~`/.config/NvChad_Venky/lua/custom"
