@@ -13,10 +13,7 @@ if [ -d "`echo ~`/.config/NvChad_Venky/lua/custom" ]; then
   rm -rf "`echo ~`/.config/NvChad_Venky/lua/custom"
 fi
 
-if [ ! -d "`echo ~`/.config/NvChad_Venky/lua/custom" ]; then
-  mkdir -p "`echo ~`/.config/NvChad_Venky/lua/custom"
-fi
-ln -s "$config_dir/../../NvChad" "`echo ~`/.config/NvChad_Venky/lua/custom"
+ln -s -r "$config_dir/../../NvChad" "`echo ~`/.config/NvChad_Venky/lua/custom"
 
 echo -e "Please run: echo 'alias vvi=\"NVIM_APPNAME=NvChad_Venky nvim\"' >> \x24HOME/.bashrc && source \x24HOME/.bashrc"
 
