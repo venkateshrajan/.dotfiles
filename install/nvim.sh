@@ -79,7 +79,7 @@ nvim_install() {
 # Returns: Nothing
 ###############################################################################
 post_install_cmd() {
-  echo "Please run : echo 'export PATH=\"$PATH:$1\"' >> $HOME/.bashrc && source $HOME/.bashrc"
+  echo -e "Please run : echo \"export PATH=\x24PATH:$1\" >> \x24HOME/.bashrc && source \x24HOME/.bashrc"
 }
 
 ###############################################################################
