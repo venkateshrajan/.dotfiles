@@ -5,8 +5,14 @@ BASH_XTRACEFD="5"
 PS4='$LINENO: '
 set -x
 
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+LGREEN='\033[1;32m'
+PURPLE='\033[0;35m'
+NC='\033[0m'
+
 if [ "$EUID" -ne 0 ]
-  then echo "Please run as root"
+  then echo "${RED}Please run as root${NC}"
   exit
 fi
 
@@ -79,9 +85,7 @@ nvim_install() {
 # Returns: Nothing
 ###############################################################################
 post_install_cmd() {
-  GREEN='\033[0;32m'
-  NC='\033[0m'
-  echo -e "${GREEN}Please run:${NC} echo \"export PATH=\x24PATH:$1\" >> \x24HOME/.bashrc && source \x24HOME/.bashrc"
+  echo -e "${GREEN}Please run:${NC} ${LGREEN}echo \"export PATH=\x24PATH:$1\" >> \x24HOME/.bashrc && source \x24HOME/.bashrc${NC}"
 }
 
 ###############################################################################
@@ -225,5 +229,5 @@ case "$osid" in
   "centos")
     install_fedora 1 ;;
   *)
-    echo "Unsupported OS id: $osid" ;;
+    echo "${RED}Unsupported OS id: $osid${NC}" ;;
 esac
