@@ -2,13 +2,13 @@
 dotfiles_root="${0%/*}"
 
 install_nvim() {
-  cd "$dotfiles_root/install"
-  ./install.sh
-  cd -
+  cd "$dotfiles_root"/install
+  ./nvim.sh
 }
 
 configure_nvim() {
-  echo "Configure nvim"
+  cd "$dotfiles_root"/install/config
+  ./nvim.sh
 }
 
 install_tmux() {
