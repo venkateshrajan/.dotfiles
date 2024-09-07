@@ -7,12 +7,13 @@ set -x
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-LGREEN='\033[1;32m'
+BLUE='\033[0;34m'
 PURPLE='\033[0;35m'
+LGREEN='\033[1;32m'
 NC='\033[0m'
 
 if [ "$EUID" -ne 0 ]
-  then echo "${RED}Please run as root${NC}"
+  then echo -e "${RED}Please run as root${NC}"
   exit
 fi
 
@@ -85,7 +86,7 @@ nvim_install() {
 # Returns: Nothing
 ###############################################################################
 post_install_cmd() {
-  echo -e "${GREEN}Please run:${NC} ${LGREEN}echo \"export PATH=\x24PATH:$1\" >> \x24HOME/.bashrc && source \x24HOME/.bashrc${NC}"
+  echo -e "${LGREEN}Please run:${NC} ${BLUE}echo \"export PATH=\x24PATH:$1\" >> \x24HOME/.bashrc && source \x24HOME/.bashrc${NC}"
 }
 
 ###############################################################################
@@ -229,5 +230,5 @@ case "$osid" in
   "centos")
     install_fedora 1 ;;
   *)
-    echo "${RED}Unsupported OS id: $osid${NC}" ;;
+    echo -e "${RED}Unsupported OS id: $osid${NC}" ;;
 esac
