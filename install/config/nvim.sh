@@ -12,7 +12,7 @@ if [ -d "`echo ~`/.config/NvChad_Venky/lua/custom" ]; then
   echo "patching NvChad custom folder"
   rm -rf "`echo ~`/.config/NvChad_Venky/lua/custom"
 fi
-ln -s "$config_dir/../../NvChad" "`echo ~`/.config/NvChad_Venky/lua/custom"
+ln -s "`echo ~`/.config/NvChad_Venky/lua/custom" "$config_dir/../../NvChad" 
 
 echo -e "Please run: echo 'alias vvi=\"NVIM_APPNAME=NvChad_Venky nvim\"' >> \x24HOME/.bashrc && source \x24HOME/.bashrc"
 
