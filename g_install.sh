@@ -14,11 +14,15 @@ configure_nvim() {
 }
 
 install_tmux() {
-  echo "Install tmux"
+  cd "$dotfiles_root"/install
+  ./tmux.sh
+  cd -
 }
 
 configure_tmux() {
-  echo "Configure tmux"
+  cd "$dotfiles_root"/install/config
+  ./tmux.sh
+  cd -
 }
 
 declare -a options=(
