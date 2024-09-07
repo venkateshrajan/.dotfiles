@@ -8,5 +8,5 @@ if [ -d "`echo ~`/.config/NvChad_Venky/lua/custom" ]; then
 fi
 ln -s "$config_dir/../../NvChad" "`echo ~`/.config/NvChad_Venky/lua/custom"
 
+echo -e "Please run: alias vvi=\"NVIM_APPNAME=NvChad_Venky nvim\""
 
-echo "Please run : echo 'export PATH=\'$PATH\':\"$1\"' >> '$HOME'/.bashrc && source '$HOME'/.bashrc"
