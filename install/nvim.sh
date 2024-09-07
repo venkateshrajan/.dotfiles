@@ -79,7 +79,9 @@ nvim_install() {
 # Returns: Nothing
 ###############################################################################
 post_install_cmd() {
-  echo -e "Please run : echo \"export PATH=\x24PATH:$1\" >> \x24HOME/.bashrc && source \x24HOME/.bashrc"
+  GREEN='\033[0;32m'
+  NC='\033[0m'
+  echo -e "${GREEN}Please run:${NC} echo \"export PATH=\x24PATH:$1\" >> \x24HOME/.bashrc && source \x24HOME/.bashrc"
 }
 
 ###############################################################################
