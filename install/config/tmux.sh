@@ -15,4 +15,5 @@ if [ -f "`echo ~`/.tmux-venky.conf" ]; then
 fi
 
 ln -s -r "$config_dir/../../.tmux.conf" "`echo ~`/.tmux-venky.conf"
+ln -s -r "$config_dir/../../.tmux.conf" "`echo ~`/.tmux.conf"
 echo -e "${LGREEN}Please run:${NC} ${BLUE}echo 'alias vtmux=\"tmux -L venky -f \x24HOME/.tmux-venky.conf\"' >> \x24HOME/.bashrc && source \x24HOME/.bashrc${NC}"
