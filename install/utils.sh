@@ -43,7 +43,8 @@ function install_packages_debian() {
   declare -a pkgs_not_available=()
   for pkg in "${required_packages[@]}"
   do
-    if [ $(check_if_installed_rocky "$pkg" 2> /dev/null) -eq 0 ] 
+    ret=$(check_if_installed_rocky "$pkg" 2> /dev/null)
+    if [ $ret -eq 0 ] 
     then
       pkgs_not_available+=("$pkg")
     fi
@@ -74,7 +75,8 @@ function install_packages_fedora() {
   declare -a pkgs_not_available=()
   for pkg in "${required_packages[@]}"
   do
-    if [ $(check_if_installed_rocky "$pkg" 2> /dev/null) -eq 0 ] 
+    ret=$(check_if_installed_rocky "$pkg" 2> /dev/null)
+    if [ $ret -eq 0 ] 
     then
       pkgs_not_available+=("$pkg")
     fi
