@@ -43,7 +43,7 @@ function install_packages_debian() {
   declare -a pkgs_not_available=()
   for pkg in "${required_packages[@]}"
   do
-    ret=$(check_if_installed_debian "$pkg" 2> /dev/null)
+    ret=$(check_if_installed_ubuntu "$pkg" 2> /dev/null)
     if [ $ret -eq 0 ] 
     then
       pkgs_not_available+=("$pkg")
