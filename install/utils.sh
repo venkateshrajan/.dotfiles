@@ -15,7 +15,7 @@ NC='\033[0m'
 scripts_dir="${0%/*}"
 
 function check_if_installed_ubuntu() {
-  dpkg -l $1 | grep $1 | awk '{ print $2 }' | wc -l
+  dpkg -l $1 | grep $1 | awk '{ if (substr($1,1,1)~/^i/) print $0 }' | wc -l
 }
 
 function check_if_installed_rocky() {
@@ -43,7 +43,8 @@ function install_packages_debian() {
   declare -a pkgs_not_available=()
   for pkg in "${required_packages[@]}"
   do
-    if [ `check_if_installed_ubuntu "$pkg" 2> /dev/null` == 0 ] 
+    ret=$(check_if_installed_ubuntu "$pkg" 2> /dev/null)
+    if [ $ret -eq 0 ] 
     then
       pkgs_not_available+=("$pkg")
     fi
@@ -98,15 +99,15 @@ function install_packages() {
   declare -a required_packages=("$@")
   case "$osid" in
     "ubuntu")
-      install_packages_debian ${required_packages_[@]} ;;
+      install_packages_debian "${required_packages[@]}" ;;
     "debian")
-      install_packages_debian ${required_packages_[@]} ;;
+      install_packages_debian "${required_packages[@]}" ;;
     "rocky")
-      install_packages_fedora ${required_packages_[@]} ;;
+      install_packages_fedora "${required_packages[@]}" ;;
     "fedora")
-      install_packages_fedora ${required_packages_[@]} ;;
+      install_packages_fedora "${required_packages[@]}" ;;
     "centos")
-      install_packages_fedora ${required_packages_[@]} ;;
+      install_packages_fedora "${required_packages[@]}" ;;
     *)
       echo -e "${RED}Unsupported OS id: $osid${NC}" ;;
   esac
