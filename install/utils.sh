@@ -103,9 +103,9 @@ function install_packages() {
   declare osid=`get_os_id`
   declare -a required_packages=("$@")
   case "$osid" in
-    "ubuntu") | "debian")
+    "ubuntu" | "debian")
       install_packages_debian "${required_packages[@]}" ;;
-    "rocky") | "fedora") | "centos")
+    "rocky" | "fedora" | "centos")
       install_packages_fedora "${required_packages[@]}" ;;
     *)
       echo -e "${RED}Unsupported OS id: $osid${NC}" ;;
