@@ -51,7 +51,7 @@ function install_packages_debian() {
   done
 
   if (( ${#pkgs_not_available[@]} == 0)); then
-    echo -e "${PURPLE} Packages ${required_packages} are already installed${NC}"
+    echo -e "${PURPLE} Packages ${required_packages[@]} are already installed${NC}"
     return
   fi
 
@@ -83,7 +83,7 @@ function install_packages_fedora() {
   done
 
   if (( ${#pkgs_not_available[@]} == 0)); then
-    echo -e "${PURPLE} Packages ${required_packages} are already installed${NC}"
+    echo -e "${PURPLE} Packages ${required_packages[@]} are already installed${NC}"
     return
   fi
 
