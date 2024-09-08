@@ -43,22 +43,23 @@ function install_packages_debian() {
   declare -a pkgs_not_available=()
   for pkg in "${required_packages[@]}"
   do
-    ret=$(check_if_installed_ubuntu "$pkg" 2> /dev/null)
-    if [ $ret -eq 0 ] 
+    if [ $(check_if_installed_rocky "$pkg" 2> /dev/null) -eq 0 ] 
     then
       pkgs_not_available+=("$pkg")
     fi
   done
 
-  # Install the packages which are not installed already
-  if (( ${#pkgs_not_available[@]} )); then
-    if [[ " ${pkgs_not_available[*]} " =~ [[:space:]]sudo[[:space:]] ]]; then
-      apt install "${pkgs_not_available[@]}" -y
-    else
-      sudo apt install "${pkgs_not_available[@]}" -y
-    fi
+  if (( ${#pkgs_not_available[@]} == 0)); then
+    echo -e "${PURPLE} Packages ${required_packages} are already installed${NC}"
+    return
   fi
 
+  # Install the packages which are not installed already
+  if [[ " ${pkgs_not_available[*]} " =~ [[:space:]]sudo[[:space:]] ]]; then
+    apt install "${pkgs_not_available[@]}" -y
+  else
+    sudo apt install "${pkgs_not_available[@]}" -y
+  fi
   echo -e "${PURPLE}Installed ${pkgs_not_available[@]} successfully${NC}"
 }
 
@@ -73,23 +74,25 @@ function install_packages_fedora() {
   declare -a pkgs_not_available=()
   for pkg in "${required_packages[@]}"
   do
-    if [ `check_if_installed_rocky "$pkg" 2> /dev/null` == 0 ] 
+    if [ $(check_if_installed_rocky "$pkg" 2> /dev/null) -eq 0 ] 
     then
       pkgs_not_available+=("$pkg")
     fi
   done
 
-  # Install the packages which are not installed already
-  if (( ${#pkgs_not_available[@]} )); then
-    if [[ " ${pkgs_not_available[*]} " =~ [[:space:]]sudo[[:space:]] ]]; then
-      dnf install -y epel-release --assumeyes
-      dnf install --assumeyes "${pkgs_not_available[@]}" --skip-broken
-    else
-      sudo dnf install -y epel-release --assumeyes
-      sudo dnf install --assumeyes "${pkgs_not_available[@]}" --skip-broken
-    fi
+  if (( ${#pkgs_not_available[@]} == 0)); then
+    echo -e "${PURPLE} Packages ${required_packages} are already installed${NC}"
+    return
   fi
 
+  # Install the packages which are not installed already
+  if [[ " ${pkgs_not_available[*]} " =~ [[:space:]]sudo[[:space:]] ]]; then
+    dnf install -y epel-release --assumeyes
+    dnf install --assumeyes "${pkgs_not_available[@]}" --skip-broken
+  else
+    sudo dnf install -y epel-release --assumeyes
+    sudo dnf install --assumeyes "${pkgs_not_available[@]}" --skip-broken
+  fi
   echo -e "${PURPLE}Installed ${pkgs_not_available[@]} successfully${NC}"
 }
 
