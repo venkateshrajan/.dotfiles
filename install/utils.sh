@@ -14,18 +14,38 @@ NC='\033[0m'
 
 scripts_dir="${0%/*}"
 
-function check_if_installed_ubuntu() {
+###############################################################################
+# Description: Check if a package is installed or not on a debian based OSes
+# Arguments: Package name
+# Returns: 0 -> if not installed
+###############################################################################
+function check_if_installed_debian() {
   dpkg -l $1 | grep $1 | awk '{ if (substr($1,1,1)~/^i/) print $0 }' | wc -l
 }
 
+###############################################################################
+# Description: Check if a package is installed or not on a fedora based OSes
+# Arguments: Package name
+# Returns: 0 -> if not installed
+###############################################################################
 function check_if_installed_rocky() {
   rpm -qa | grep -w $1 | awk 'BEGIN {FS="-"} {print $1}' | wc -l
 }
 
+###############################################################################
+# Description: Gets the OS ID
+# Arguments: Nothing
+# Returns: OS ID
+###############################################################################
 function get_os_id() {
   cat /etc/os-release | grep -w "ID" | awk 'BEGIN {FS="="} {print $2}' | tr -d '"'
 }
 
+###############################################################################
+# Description: Gets the OS version ID
+# Arguments: Nothing
+# Returns: OS version ID
+###############################################################################
 function get_os_version_id() {
   cat /etc/os-release | grep -w "VERSION_ID" | 
     awk 'BEGIN {FS="="} {print $2}' | tr -d '"' |
@@ -43,8 +63,7 @@ function install_packages_debian() {
   declare -a pkgs_not_available=()
   for pkg in "${required_packages[@]}"
   do
-    ret=$(check_if_installed_ubuntu "$pkg" 2> /dev/null)
-    if [ $ret -eq 0 ] 
+    if [ $(check_if_installed_debian "$pkg" 2> /dev/null) -eq 0 ] 
     then
       pkgs_not_available+=("$pkg")
     fi
@@ -75,8 +94,8 @@ function install_packages_fedora() {
   declare -a pkgs_not_available=()
   for pkg in "${required_packages[@]}"
   do
-    ret=$(check_if_installed_rocky "$pkg" 2> /dev/null)
-    if [ $ret -eq 0 ] 
+    ret=
+    if [ $(check_if_installed_rocky "$pkg" 2> /dev/null) -eq 0 ] 
     then
       pkgs_not_available+=("$pkg")
     fi
