@@ -51,7 +51,7 @@ function install_packages_debian() {
   done
 
   if (( ${#pkgs_not_available[@]} == 0)); then
-    echo -e "${PURPLE} Packages ${required_packages[@]} are already installed${NC}"
+    echo -e "${PURPLE} Packages ${required_packages[@]} already installed${NC}"
     return
   fi
 
@@ -83,7 +83,7 @@ function install_packages_fedora() {
   done
 
   if (( ${#pkgs_not_available[@]} == 0)); then
-    echo -e "${PURPLE} Packages ${required_packages[@]} are already installed${NC}"
+    echo -e "${PURPLE} Packages ${required_packages[@]} already installed${NC}"
     return
   fi
 
@@ -103,15 +103,9 @@ function install_packages() {
   declare osid=`get_os_id`
   declare -a required_packages=("$@")
   case "$osid" in
-    "ubuntu")
+    "ubuntu") | "debian")
       install_packages_debian "${required_packages[@]}" ;;
-    "debian")
-      install_packages_debian "${required_packages[@]}" ;;
-    "rocky")
-      install_packages_fedora "${required_packages[@]}" ;;
-    "fedora")
-      install_packages_fedora "${required_packages[@]}" ;;
-    "centos")
+    "rocky") | "fedora") | "centos")
       install_packages_fedora "${required_packages[@]}" ;;
     *)
       echo -e "${RED}Unsupported OS id: $osid${NC}" ;;
