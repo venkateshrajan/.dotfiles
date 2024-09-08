@@ -1,4 +1,10 @@
 #!/bin/bash
+
+if [ "$EUID" -ne 0 ]
+  then >&2 echo -e "${RED}Please run as root${NC}"
+  exit
+fi
+
 dotfiles_root="${0%/*}"
 
 install_nvim() {

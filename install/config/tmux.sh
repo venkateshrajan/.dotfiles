@@ -10,7 +10,7 @@ NC='\033[0m'
 config_dir="${0%/*}"
 
 if [ -f "`echo ~`/.tmux-venky.conf" ]; then
-  echo -e "${PURPLE}patching tmux config${NC}"
+  >&2 echo -e "${PURPLE}patching tmux config${NC}"
   rm -rf "`echo ~`/.tmux-venky.conf"
 fi
 

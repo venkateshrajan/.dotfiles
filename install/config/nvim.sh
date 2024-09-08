@@ -9,13 +9,13 @@ NC='\033[0m'
 config_dir="${0%/*}"
 
 if [ -d "`echo ~`/.config/NvChad_Venky" ]; then
-  echo -e "${PURPLE}Updating NvChad${NC}"
+  >&2 echo -e "${PURPLE}Updating NvChad${NC}"
   rm -rf "`echo ~`/.config/NvChad_Venky"
 fi
 git clone https://github.com/NvChad/starter ~/.config/NvChad_Venky
 
 if [ -d "`echo ~`/.config/NvChad_Venky/lua/custom" ]; then
-  echo -e "${PURPLE}patching NvChad custom folder${NC}"
+  >&2 echo -e "${PURPLE}patching NvChad custom folder${NC}"
   rm -rf "`echo ~`/.config/NvChad_Venky/lua/custom"
 fi
 
