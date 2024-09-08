@@ -51,7 +51,7 @@ function install_packages_debian() {
   done
 
   if (( ${#pkgs_not_available[@]} == 0)); then
-    echo -e "${PURPLE} Packages ${required_packages[@]} already installed${NC}"
+    >&2 echo -e "${PURPLE} Packages ${required_packages[@]} already installed${NC}"
     return
   fi
 
@@ -61,7 +61,7 @@ function install_packages_debian() {
   else
     sudo apt install "${pkgs_not_available[@]}" -y
   fi
-  echo -e "${PURPLE}Installed ${pkgs_not_available[@]} successfully${NC}"
+  return 0
 }
 
 ###############################################################################
@@ -83,7 +83,7 @@ function install_packages_fedora() {
   done
 
   if (( ${#pkgs_not_available[@]} == 0)); then
-    echo -e "${PURPLE} Packages ${required_packages[@]} already installed${NC}"
+    >&2 echo -e "${PURPLE} Packages ${required_packages[@]} already installed${NC}"
     return
   fi
 
@@ -95,7 +95,7 @@ function install_packages_fedora() {
     sudo dnf install -y epel-release --assumeyes
     sudo dnf install --assumeyes "${pkgs_not_available[@]}" --skip-broken
   fi
-  echo -e "${PURPLE}Installed ${pkgs_not_available[@]} successfully${NC}"
+  return 0
 }
 
 function install_packages() {
@@ -108,6 +108,6 @@ function install_packages() {
     "rocky" | "fedora" | "centos")
       install_packages_fedora "${required_packages[@]}" ;;
     *)
-      echo -e "${RED}Unsupported OS id: $osid${NC}" ;;
+      >&2 echo -e "${RED}Unsupported OS id: $osid${NC}" ;;
   esac
 }
