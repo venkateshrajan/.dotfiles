@@ -25,6 +25,10 @@ configure_tmux() {
   cd -
 }
 
+source "$dotfiles_root/install/utils.sh"
+required_packages=("dialog findutils")
+install_pacakges "${required_packages[@]}"
+
 declare -a options=(
   "i_nvim" "'Install nvim'" "off"
   "c_nvim" "'Configure nvim'" "off"
