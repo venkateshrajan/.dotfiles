@@ -98,15 +98,15 @@ function install_packages() {
   declare -a required_packages=("$@")
   case "$osid" in
     "ubuntu")
-      install_debian ${required_packages[@]} ;;
+      install_packages_debian ${required_packages_[@]} ;;
     "debian")
-      install_debian ${required_packages[@]} ;;
+      install_packages_debian ${required_packages_[@]} ;;
     "rocky")
-      install_fedora ${required_packages[@]} ;;
+      install_packages_fedora ${required_packages_[@]} ;;
     "fedora")
-      install_fedora ${required_packages[@]} ;;
+      install_packages_fedora ${required_packages_[@]} ;;
     "centos")
-      install_fedora ${required_packages[@]} ;;
+      install_packages_fedora ${required_packages_[@]} ;;
     *)
       echo -e "${RED}Unsupported OS id: $osid${NC}" ;;
   esac
