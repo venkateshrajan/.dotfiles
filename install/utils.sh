@@ -19,7 +19,7 @@ function check_if_installed_ubuntu() {
 }
 
 function check_if_installed_rocky() {
-  rpm -qa | grep -w $1 | aws 'BEGIN {FS="-"} {print $1}' | wc -l
+  rpm -qa | grep -w $1 | awk 'BEGIN {FS="-"} {print $1}' | wc -l
 }
 
 function get_os_id() {
