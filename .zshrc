@@ -3,7 +3,7 @@ export VCPKG_ROOT="$HOME/vcpkg"
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
-export PATH="%HOME/.local/bin":$VCPKG_ROOT:$PATH
+export PATH="%HOME/.local/bin":$VCPKG_ROOT:$PATH:/opt/nvim-linux64/bin
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
