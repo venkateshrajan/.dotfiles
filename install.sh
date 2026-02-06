@@ -1,49 +1,298 @@
 #!/usr/bin/env zsh
 
-declare -A mapsrctolink
-mapsrctolink=( 
-    "`pwd`/alacritty" ".config/alacritty" # Alacritty
-    "`pwd`/compton.conf" ".config/compton.conf"  # Compton
-    "`pwd`/i3" ".config/i3" # i3
-    "`pwd`/init.lua" ".config/nvim" #nvim
-    "`pwd`/.zshrc" ".zshrc" #zsh
-    "`pwd`/.tmux.conf" ".tmux.conf" #tmux
-)
+set -e
 
-for k v ("${(@kv)mapsrctolink}") {
-    echo
-    if read -q "choice?Press Y/y to config $k -> `echo ~`/$v: "; then
-        echo
-        if [ ! -d "`echo ~`/.bkp/.config" ]; then
-            echo "Creating `echo ~`/.bkp/.config"
-            mkdir -p `echo ~`/.bkp/.config
-        fi
+DOTFILES_DIR="${0:a:h}"
 
-        if [ ! -d "`echo ~`/.bkp/$v" ] && [ ! -f "`echo ~`/.bkp/$v" ]; then
-            if [ -d "`echo ~`/$v" ] || [ -f "`echo ~`/$v" ]; then
-                echo "Backing up `echo ~`/$v"
-                mv "`echo ~`/$v" "`echo ~`/.bkp/$v"
-            fi
-        fi
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+PURPLE='\033[0;35m'
+YELLOW='\033[0;33m'
+NC='\033[0m'
 
-        ln -s "$k" "`echo ~`/$v"
+info()    { echo -e "${PURPLE}[INFO]${NC} $1"; }
+success() { echo -e "${GREEN}[OK]${NC} $1"; }
+warn()    { echo -e "${RED}[WARN]${NC} $1"; }
+
+# Cross-distro package installer
+install_pkg() {
+    if command -v apt &>/dev/null; then
+        sudo apt install -y "$@"
+    elif command -v dnf &>/dev/null; then
+        sudo dnf install -y "$@"
+    else
+        warn "No supported package manager found. Please install manually: $*"
+        return 1
     fi
 }
 
+###########################################################################
+# Main Menu
+###########################################################################
 echo
-if read -q "choice?Press Y/y to source the configurations: "; then
-    source ~/.zshrc
-    tmux source ~/.tmux.conf
+echo -e "${GREEN}========================================${NC}"
+echo -e "${GREEN}   Dotfiles Installation${NC}"
+echo -e "${GREEN}========================================${NC}"
+echo
+echo "Select what to install (space-separated numbers, or 'all'):"
+echo
+echo -e "${YELLOW}1)${NC} Prerequisites (oh-my-zsh, plugins, fzf, ripgrep, zoxide, lsd, tpm)"
+echo -e "${YELLOW}2)${NC} Neovim (package manager or AppImage + NvChad starter + providers)"
+echo -e "${YELLOW}3)${NC} Symlink configs (zshrc, tmux, alacritty, i3, compton, nvim)"
+echo -e "${YELLOW}4)${NC} NvChad_Venky config"
+echo -e "${YELLOW}5)${NC} Source/reload configs"
+echo
+echo -n "Enter choice(s) [1-5] or 'all': "
+read selection
+
+# Parse selection
+declare -A selected
+if [[ "$selection" == "all" ]]; then
+    selected[1]=1 selected[2]=1 selected[3]=1 selected[4]=1 selected[5]=1
+else
+    for num in ${(s: :)selection}; do
+        if [[ "$num" =~ ^[1-5]$ ]]; then
+            selected[$num]=1
+        fi
+    done
 fi
 
-echo 
-if read -q "choice?Press Y/y to install NvChad: "; then
-  git clone https://github.com/NvChad/NvChad ~/.config/NvChad_Venky
-  if [ -d "`echo ~`/.config/NvChad_Venky/lua/custom" ]; then
-    echo "patching NvChad custom folder"
-    rm -rf "`echo ~`/.config/NvChad_Venky/lua/custom"
-  fi
-  ln -s "`pwd`/NvChad" "`echo ~`/.config/NvChad_Venky/lua/custom"
+###########################################################################
+# Prerequisites
+###########################################################################
+if [[ -n "${selected[1]}" ]]; then
+    echo
+    echo -e "${GREEN}=== Prerequisites ===${NC}"
+
+    # --- Core packages via package manager ---
+    info "Installing core packages (git, curl, fzf, ripgrep)..."
+    install_pkg git curl fzf ripgrep || warn "Some core packages could not be installed"
+
+    # --- zoxide ---
+    if ! command -v zoxide &>/dev/null; then
+        info "Installing zoxide..."
+        install_pkg zoxide 2>/dev/null || {
+            info "Falling back to zoxide installer script..."
+            curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+        }
+    else
+        info "zoxide already installed"
+    fi
+
+    # --- lsd ---
+    if ! command -v lsd &>/dev/null; then
+        info "Installing lsd..."
+        install_pkg lsd 2>/dev/null || warn "lsd not in package manager. Install from: https://github.com/lsd-rs/lsd/releases"
+    else
+        info "lsd already installed"
+    fi
+
+    # --- oh-my-zsh ---
+    if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
+        info "Installing oh-my-zsh..."
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    else
+        info "oh-my-zsh already installed"
+    fi
+
+    # --- zsh plugins ---
+    local zsh_custom="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+
+    if [[ ! -d "$zsh_custom/plugins/zsh-autosuggestions" ]]; then
+        info "Installing zsh-autosuggestions..."
+        git clone https://github.com/zsh-users/zsh-autosuggestions "$zsh_custom/plugins/zsh-autosuggestions"
+    else
+        info "zsh-autosuggestions already installed"
+    fi
+
+    if [[ ! -d "$zsh_custom/plugins/zsh-syntax-highlighting" ]]; then
+        info "Installing zsh-syntax-highlighting..."
+        git clone https://github.com/zsh-users/zsh-syntax-highlighting "$zsh_custom/plugins/zsh-syntax-highlighting"
+    else
+        info "zsh-syntax-highlighting already installed"
+    fi
+
+    # --- tpm (tmux plugin manager) ---
+    if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then
+        info "Installing tmux plugin manager (tpm)..."
+        git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
+    else
+        info "tpm already installed"
+    fi
+
+    success "Prerequisites installed"
+fi
+
+###########################################################################
+# Neovim installation
+###########################################################################
+if [[ -n "${selected[2]}" ]]; then
+    echo
+    echo -e "${GREEN}=== Neovim Installation ===${NC}"
+
+    # Check if nvim is already installed and get version
+    if command -v nvim &>/dev/null; then
+        local nvim_version=$(nvim --version | head -n1 | grep -oP 'v\d+\.\d+\.\d+')
+        info "Found nvim $nvim_version"
+    fi
+
+    # Try package manager first
+    info "Attempting to install nvim via package manager..."
+    if install_pkg neovim 2>/dev/null; then
+        success "Neovim installed via package manager"
+    else
+        # Fallback to AppImage
+        info "Package manager failed, downloading nvim AppImage..."
+
+        mkdir -p "$HOME/.local/bin"
+        cd "$HOME/.local/bin"
+
+        # Remove old AppImage if it exists
+        [[ -f nvim.appimage ]] && rm nvim.appimage
+
+        # Download stable AppImage
+        if curl -LO https://github.com/neovim/neovim/releases/download/stable/nvim.appimage; then
+            chmod u+x nvim.appimage
+
+            # Try to run it to see if it works directly
+            if ./nvim.appimage --version &>/dev/null; then
+                ln -sf "$HOME/.local/bin/nvim.appimage" "$HOME/.local/bin/nvim"
+                success "Neovim AppImage installed to ~/.local/bin/nvim"
+            else
+                # Extract if FUSE is not available
+                info "Extracting AppImage (FUSE not available)..."
+                ./nvim.appimage --appimage-extract &>/dev/null
+                ln -sf "$HOME/.local/bin/squashfs-root/usr/bin/nvim" "$HOME/.local/bin/nvim"
+                success "Neovim extracted to ~/.local/bin"
+            fi
+
+            # Check if ~/.local/bin is in PATH
+            if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+                warn "Add ~/.local/bin to your PATH: export PATH=\"\$HOME/.local/bin:\$PATH\""
+            fi
+        else
+            warn "Failed to download nvim AppImage. Install manually from: https://github.com/neovim/neovim/releases"
+        fi
+
+        cd "$DOTFILES_DIR"
+    fi
+
+    # Install NvChad starter
+    if command -v nvim &>/dev/null; then
+        echo
+        if read -q "choice?Press Y/y to install NvChad starter to ~/.config/nvim: "; then
+            echo
+            if [[ -e "$HOME/.config/nvim" ]]; then
+                warn "~/.config/nvim already exists. Remove it first if you want to install NvChad starter."
+            else
+                info "Installing NvChad starter..."
+                git clone https://github.com/NvChad/starter "$HOME/.config/nvim"
+                success "NvChad starter installed"
+                info "Launch nvim to install plugins (will happen automatically)"
+            fi
+        fi
+    fi
+
+    # Install nvim providers
+    if command -v nvim &>/dev/null; then
+        # Node provider
+        if command -v npm &>/dev/null; then
+            info "Installing neovim node provider..."
+            npm install -g neovim
+        fi
+
+        # Ruby provider
+        if command -v gem &>/dev/null; then
+            info "Installing neovim ruby provider..."
+            gem install neovim
+        fi
+
+        success "Neovim providers installed"
+    fi
+fi
+
+###########################################################################
+# Symlink dotfiles
+###########################################################################
+if [[ -n "${selected[3]}" ]]; then
+    # Ensure base directories exist
+    mkdir -p "$HOME/.config"
+    mkdir -p "$HOME/.bkp/.config"
+
+    echo
+    echo -e "${GREEN}=== Symlink Configs ===${NC}"
+
+    declare -A mapsrctolink
+    mapsrctolink=(
+        "$DOTFILES_DIR/alacritty"     ".config/alacritty"     # Alacritty
+        "$DOTFILES_DIR/compton.conf"  ".config/compton.conf"  # Compton
+        "$DOTFILES_DIR/i3"            ".config/i3"            # i3
+        "$DOTFILES_DIR/init.lua"      ".config/nvim-init"     # nvim (init.lua config)
+        "$DOTFILES_DIR/.zshrc"        ".zshrc"                # zsh
+        "$DOTFILES_DIR/.tmux.conf"    ".tmux.conf"            # tmux
+    )
+
+    for k v ("${(@kv)mapsrctolink}") {
+        # Skip if source doesn't exist
+        if [[ ! -e "$k" ]]; then
+            warn "Source $k does not exist, skipping"
+            continue
+        fi
+
+        # Back up existing file/directory (skip if it's already a symlink)
+        if [[ -e "$HOME/$v" && ! -L "$HOME/$v" ]]; then
+            if [[ ! -e "$HOME/.bkp/$v" ]]; then
+                info "Backing up $HOME/$v -> $HOME/.bkp/$v"
+                mv "$HOME/$v" "$HOME/.bkp/$v"
+            else
+                warn "Backup already exists at $HOME/.bkp/$v, skipping backup"
+            fi
+        fi
+
+        # Remove existing symlink so ln -s doesn't fail on re-runs
+        [[ -L "$HOME/$v" ]] && rm "$HOME/$v"
+
+        ln -s "$k" "$HOME/$v"
+        success "Linked $k -> $HOME/$v"
+    }
+fi
+
+###########################################################################
+# NvChad_Venky config
+###########################################################################
+if [[ -n "${selected[4]}" ]]; then
+    echo
+    echo -e "${GREEN}=== NvChad_Venky Config ===${NC}"
+
+    if [[ -e "$HOME/.config/NvChad_Venky" ]]; then
+        warn "Removing existing $HOME/.config/NvChad_Venky"
+        rm -rf "$HOME/.config/NvChad_Venky"
+    fi
+
+    ln -s "$DOTFILES_DIR/NvChad_Venky" "$HOME/.config/NvChad_Venky"
+    success "Linked NvChad_Venky config"
+    info "Launch with: NVIM_APPNAME=NvChad_Venky nvim"
+fi
+
+###########################################################################
+# Source configurations
+###########################################################################
+if [[ -n "${selected[5]}" ]]; then
+    echo
+    echo -e "${GREEN}=== Source Configs ===${NC}"
+
+    if [[ -f "$HOME/.zshrc" ]]; then
+        info "Sourcing .zshrc..."
+        source "$HOME/.zshrc" 2>/dev/null || warn "Could not source .zshrc (may need interactive shell)"
+    fi
+    if command -v tmux &>/dev/null && tmux list-sessions &>/dev/null 2>&1; then
+        info "Reloading tmux config..."
+        tmux source-file "$HOME/.tmux.conf" || warn "Could not reload tmux config"
+    else
+        warn "Tmux server not running, skipping tmux reload"
+    fi
 fi
 
 echo
+success "Done!"
