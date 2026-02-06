@@ -28,6 +28,53 @@ install_pkg() {
 }
 
 ###########################################################################
+# Build Neovim from source (when distro version is too old)
+###########################################################################
+install_nvim_from_source() {
+    info "Installing build dependencies (cmake, ninja-build, gettext, unzip)..."
+    install_pkg cmake ninja-build gettext unzip || {
+        warn "Failed to install build dependencies. Cannot build Neovim from source."
+        return 1
+    }
+
+    local build_dir=$(mktemp -d)
+    info "Cloning Neovim stable into $build_dir..."
+    if ! git clone --depth 1 --branch stable https://github.com/neovim/neovim.git "$build_dir"; then
+        warn "Failed to clone Neovim repository"
+        rm -rf "$build_dir"
+        return 1
+    fi
+
+    info "Building Neovim (this may take a few minutes)..."
+    if ! make -C "$build_dir" CMAKE_BUILD_TYPE=Release -j$(nproc); then
+        warn "Neovim build failed"
+        rm -rf "$build_dir"
+        return 1
+    fi
+
+    # Remove old package-managed neovim to avoid conflicts
+    if command -v apt &>/dev/null && dpkg -l neovim &>/dev/null 2>&1; then
+        info "Removing package-managed Neovim..."
+        sudo apt-get remove -y neovim neovim-runtime 2>/dev/null
+    elif command -v dnf &>/dev/null && rpm -q neovim &>/dev/null 2>&1; then
+        info "Removing package-managed Neovim..."
+        sudo dnf remove -y neovim 2>/dev/null
+    fi
+
+    info "Installing Neovim to /usr/local..."
+    if sudo make -C "$build_dir" install; then
+        local new_ver=$(nvim --version | head -n1 | grep -oP 'v[\d.]+')
+        success "Neovim $new_ver built and installed from source"
+    else
+        warn "Failed to install Neovim"
+        rm -rf "$build_dir"
+        return 1
+    fi
+
+    rm -rf "$build_dir"
+}
+
+###########################################################################
 # Main Menu
 ###########################################################################
 echo
@@ -137,6 +184,9 @@ if [[ -n "${selected[2]}" ]]; then
         info "Found nvim $nvim_version"
     fi
 
+    NVIM_MIN_MAJOR=0
+    NVIM_MIN_MINOR=11
+
     # Try package manager first
     info "Attempting to install nvim via package manager..."
     if install_pkg neovim 2>/dev/null; then
@@ -176,6 +226,20 @@ if [[ -n "${selected[2]}" ]]; then
         fi
 
         cd "$DOTFILES_DIR"
+    fi
+
+    # Version check — build from source if installed version is below minimum
+    if command -v nvim &>/dev/null; then
+        local ver_line=$(nvim --version | head -n1)
+        local cur_major=$(echo "$ver_line" | grep -oP 'v\K\d+(?=\.)')
+        local cur_minor=$(echo "$ver_line" | grep -oP 'v\d+\.\K\d+(?=\.)')
+
+        if (( cur_major < NVIM_MIN_MAJOR || (cur_major == NVIM_MIN_MAJOR && cur_minor < NVIM_MIN_MINOR) )); then
+            warn "Neovim v${cur_major}.${cur_minor} is too old (need >= ${NVIM_MIN_MAJOR}.${NVIM_MIN_MINOR}). Building from source..."
+            install_nvim_from_source
+        else
+            success "Neovim v${cur_major}.${cur_minor} meets minimum version requirement"
+        fi
     fi
 
     # Install NvChad starter
