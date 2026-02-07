@@ -89,17 +89,18 @@ echo -e "${YELLOW}2)${NC} Neovim (package manager or AppImage + NvChad starter +
 echo -e "${YELLOW}3)${NC} Symlink configs (zshrc, tmux, alacritty, i3, compton, nvim)"
 echo -e "${YELLOW}4)${NC} NvChad_Venky config"
 echo -e "${YELLOW}5)${NC} Source/reload configs"
+echo -e "${YELLOW}6)${NC} Configure Git (global user.name and user.email)"
 echo
-echo -n "Enter choice(s) [1-5] or 'all': "
+echo -n "Enter choice(s) [1-6] or 'all': "
 read selection
 
 # Parse selection
 declare -A selected
 if [[ "$selection" == "all" ]]; then
-    selected[1]=1 selected[2]=1 selected[3]=1 selected[4]=1 selected[5]=1
+    selected[1]=1 selected[2]=1 selected[3]=1 selected[4]=1 selected[5]=1 selected[6]=1
 else
     for num in ${(s: :)selection}; do
-        if [[ "$num" =~ ^[1-5]$ ]]; then
+        if [[ "$num" =~ ^[1-6]$ ]]; then
             selected[$num]=1
         fi
     done
@@ -113,8 +114,31 @@ if [[ -n "${selected[1]}" ]]; then
     echo -e "${GREEN}=== Prerequisites ===${NC}"
 
     # --- Core packages via package manager ---
-    info "Installing core packages (git, curl, fzf, ripgrep)..."
-    install_pkg git curl fzf ripgrep || warn "Some core packages could not be installed"
+    info "Installing core packages (git, curl, fzf, ripgrep, tmux)..."
+    install_pkg git curl fzf ripgrep tmux || warn "Some core packages could not be installed"
+
+    # --- gh (GitHub CLI) ---
+    if ! command -v gh &>/dev/null; then
+        info "Installing GitHub CLI (gh)..."
+        if command -v apt &>/dev/null; then
+            (type -p wget >/dev/null || sudo apt install -y wget) \
+                && sudo mkdir -p -m 755 /etc/apt/keyrings \
+                && out=$(mktemp) && wget -nv -O"$out" https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+                && cat "$out" | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null \
+                && sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+                && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null \
+                && sudo apt update && sudo apt install -y gh \
+                && rm -f "$out"
+        elif command -v dnf &>/dev/null; then
+            sudo dnf install -y 'dnf-command(config-manager)' \
+                && sudo dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo \
+                && sudo dnf install -y gh
+        else
+            warn "Could not install gh. Install manually from: https://cli.github.com/"
+        fi
+    else
+        info "gh already installed"
+    fi
 
     # --- zoxide ---
     if ! command -v zoxide &>/dev/null; then
@@ -355,6 +379,47 @@ if [[ -n "${selected[5]}" ]]; then
         tmux source-file "$HOME/.tmux.conf" || warn "Could not reload tmux config"
     else
         warn "Tmux server not running, skipping tmux reload"
+    fi
+fi
+
+###########################################################################
+# Configure Git
+###########################################################################
+if [[ -n "${selected[6]}" ]]; then
+    echo
+    echo -e "${GREEN}=== Configure Git ===${NC}"
+
+    local current_name=$(git config --global user.name 2>/dev/null)
+    local current_email=$(git config --global user.email 2>/dev/null)
+
+    if [[ -n "$current_name" ]]; then
+        info "Current git user.name: $current_name"
+    fi
+    if [[ -n "$current_email" ]]; then
+        info "Current git user.email: $current_email"
+    fi
+
+    echo -n "Enter git user.name [${current_name:-}]: "
+    read git_name
+    echo -n "Enter git user.email [${current_email:-}]: "
+    read git_email
+
+    if [[ -n "$git_name" ]]; then
+        git config --global user.name "$git_name"
+        success "Set git user.name to: $git_name"
+    elif [[ -n "$current_name" ]]; then
+        info "Keeping existing git user.name: $current_name"
+    else
+        warn "No git user.name set"
+    fi
+
+    if [[ -n "$git_email" ]]; then
+        git config --global user.email "$git_email"
+        success "Set git user.email to: $git_email"
+    elif [[ -n "$current_email" ]]; then
+        info "Keeping existing git user.email: $current_email"
+    else
+        warn "No git user.email set"
     fi
 fi
 
