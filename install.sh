@@ -540,6 +540,28 @@ if [[ -n "${selected[8]}" ]]; then
         success "Linked skill: $skill_name"
     done
 
+    # Configure status line (writes settings.json with correct path)
+    local settings_file="$HOME/.claude/settings.json"
+    local statusline_cmd="$DOTFILES_DIR/claude/statusline.sh"
+
+    if [[ -f "$settings_file" ]]; then
+        # Merge statusLine into existing settings
+        local tmp=$(mktemp)
+        jq --arg cmd "$statusline_cmd" '.statusLine = {"type": "command", "command": $cmd}' "$settings_file" > "$tmp" \
+            && mv "$tmp" "$settings_file"
+        success "Updated statusLine in settings.json"
+    else
+        cat > "$settings_file" <<EOJSON
+{
+  "statusLine": {
+    "type": "command",
+    "command": "$statusline_cmd"
+  }
+}
+EOJSON
+        success "Created settings.json with statusLine"
+    fi
+
     success "Claude Code config complete"
 fi
 

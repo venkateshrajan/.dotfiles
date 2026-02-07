@@ -76,6 +76,7 @@ Uses Oh-My-Zsh with plugins: vi-mode, zsh-autosuggestions, zsh-syntax-highlighti
 Custom skills and settings for Claude Code CLI. The installer symlinks individual skill directories into `~/.claude/skills/`. Only portable config is tracked — transient data (cache, history, sessions, credentials) lives only in `~/.claude/` at runtime.
 
 - `claude/skills/frontend-design/SKILL.md` — custom skill for high-quality frontend design
+- `claude/statusline.sh` — status line script showing directory, git branch, model, context %, time
 
 ### Tmux Configuration
 
