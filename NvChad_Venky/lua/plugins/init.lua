@@ -24,6 +24,15 @@ return {
   },
 
   {
+    "williamboman/mason.nvim",
+    opts = {
+      ensure_installed = {
+        "prettier",
+      },
+    },
+  },
+
+  {
     "ThePrimeagen/harpoon",
   },
   {
