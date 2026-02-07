@@ -90,17 +90,18 @@ echo -e "${YELLOW}3)${NC} Symlink configs (zshrc, tmux, alacritty, i3, compton, 
 echo -e "${YELLOW}4)${NC} NvChad_Venky config"
 echo -e "${YELLOW}5)${NC} Source/reload configs"
 echo -e "${YELLOW}6)${NC} Configure Git (global user.name and user.email)"
+echo -e "${YELLOW}7)${NC} Install tools (docker, ...)"
 echo
-echo -n "Enter choice(s) [1-6] or 'all': "
+echo -n "Enter choice(s) [1-7] or 'all': "
 read selection
 
 # Parse selection
 declare -A selected
 if [[ "$selection" == "all" ]]; then
-    selected[1]=1 selected[2]=1 selected[3]=1 selected[4]=1 selected[5]=1 selected[6]=1
+    selected[1]=1 selected[2]=1 selected[3]=1 selected[4]=1 selected[5]=1 selected[6]=1 selected[7]=1
 else
     for num in ${(s: :)selection}; do
-        if [[ "$num" =~ ^[1-6]$ ]]; then
+        if [[ "$num" =~ ^[1-7]$ ]]; then
             selected[$num]=1
         fi
     done
@@ -421,6 +422,95 @@ if [[ -n "${selected[6]}" ]]; then
     else
         warn "No git user.email set"
     fi
+fi
+
+###########################################################################
+# Install Tools
+###########################################################################
+if [[ -n "${selected[7]}" ]]; then
+    echo
+    echo -e "${GREEN}=== Install Tools ===${NC}"
+    echo
+    echo "Select tools to install (space-separated numbers, or 'all'):"
+    echo
+    echo -e "${YELLOW}  a)${NC} Docker"
+    echo
+    echo -n "Enter choice(s) or 'all': "
+    read tool_selection
+
+    declare -A tools_selected
+    if [[ "$tool_selection" == "all" ]]; then
+        tools_selected[a]=1
+    else
+        for t in ${(s: :)tool_selection}; do
+            case "$t" in
+                a) tools_selected[a]=1 ;;
+            esac
+        done
+    fi
+
+    # --- Docker ---
+    if [[ -n "${tools_selected[a]}" ]]; then
+        echo
+        echo -e "${GREEN}--- Docker ---${NC}"
+
+        if command -v docker &>/dev/null; then
+            info "Docker already installed: $(docker --version)"
+        else
+            info "Installing Docker..."
+
+            if command -v apt &>/dev/null; then
+                # Remove old/conflicting packages
+                for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do
+                    sudo apt-get remove -y "$pkg" 2>/dev/null || true
+                done
+
+                # Set up Docker apt repository
+                sudo apt-get update
+                install_pkg ca-certificates curl
+                sudo install -m 0755 -d /etc/apt/keyrings
+                sudo curl -fsSL https://download.docker.com/linux/$(. /etc/os-release && echo "$ID")/gpg \
+                    -o /etc/apt/keyrings/docker.asc
+                sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+                echo \
+                    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
+                    https://download.docker.com/linux/$(. /etc/os-release && echo "$ID") \
+                    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+                    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+                sudo apt-get update
+                sudo apt-get install -y docker-ce docker-ce-cli containerd.io \
+                    docker-buildx-plugin docker-compose-plugin
+
+            elif command -v dnf &>/dev/null; then
+                # Remove old/conflicting packages
+                sudo dnf remove -y docker docker-client docker-client-latest \
+                    docker-common docker-latest docker-latest-logrotate \
+                    docker-logrotate docker-engine podman runc 2>/dev/null || true
+
+                sudo dnf install -y dnf-plugins-core
+                sudo dnf config-manager --add-repo \
+                    https://download.docker.com/linux/$(. /etc/os-release && echo "$ID")/docker-ce.repo
+                sudo dnf install -y docker-ce docker-ce-cli containerd.io \
+                    docker-buildx-plugin docker-compose-plugin
+            else
+                warn "Could not install Docker. Install manually from: https://docs.docker.com/engine/install/"
+            fi
+
+            # Post-install: add user to docker group, enable service
+            if command -v docker &>/dev/null; then
+                sudo groupadd -f docker
+                sudo usermod -aG docker "$USER"
+                sudo systemctl enable docker
+                sudo systemctl start docker
+                success "Docker installed: $(docker --version)"
+                info "Log out and back in for docker group membership to take effect"
+            fi
+        fi
+    fi
+
+    success "Tools installation complete"
 fi
 
 echo
