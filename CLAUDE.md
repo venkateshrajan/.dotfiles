@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-Personal dotfiles repository managing configurations for Neovim (NvChad), Zsh (Oh-My-Zsh), Tmux, Alacritty, i3 window manager, and Compton. Targets Debian/Ubuntu and Fedora/Rocky Linux systems.
+Personal dotfiles repository managing configurations for Neovim (NvChad), Zsh (Oh-My-Zsh), Tmux, Alacritty, i3 window manager, Compton, and Claude Code. Targets Debian/Ubuntu and Fedora/Rocky Linux systems.
 
 ## Installation
 
@@ -18,6 +18,7 @@ git clone --recurse-submodules <repo> && ./install.sh
   - Symlinks configs and backs up existing files to `~/.bkp/`
   - Configures git global user.name and user.email (interactive prompts)
   - Installs tools via sub-menu (Docker, ...)
+  - Symlinks Claude Code skills into `~/.claude/skills/`
   - NvChad starter → `~/.config/nvim`, init.lua → `~/.config/nvim-init`, NvChad_Venky → `~/.config/NvChad_Venky`
 - `g_install.sh` — root-based bash installer using `dialog` for multi-step setup (alternative to install.sh)
 - `install/nvim.sh`, `install/tmux.sh` — individual tool installers (require root)
@@ -51,6 +52,7 @@ The installer creates these symlinks (source → destination):
 - `i3/` → `~/.config/i3`
 - `init.lua/` → `~/.config/nvim-init` (alternative nvim config, use with `NVIM_APPNAME=nvim-init nvim`)
 - `NvChad_Venky` custom dir → `~/.config/NvChad_Venky`
+- `claude/skills/*` → `~/.claude/skills/*` (Claude Code custom skills)
 
 No symlink manager (stow/chezmoi) is used — plain `ln -s` with manual backup.
 
@@ -68,6 +70,12 @@ No symlink manager (stow/chezmoi) is used — plain `ln -s` with manual backup.
 ### Zsh Configuration
 
 Uses Oh-My-Zsh with plugins: vi-mode, zsh-autosuggestions, zsh-syntax-highlighting, z, fzf, and others. Integrates zoxide, nvm, and custom aliases (`vi` launches NvChad, `ts` opens tmux session finder).
+
+### Claude Code Configuration (`claude/`)
+
+Custom skills and settings for Claude Code CLI. The installer symlinks individual skill directories into `~/.claude/skills/`. Only portable config is tracked — transient data (cache, history, sessions, credentials) lives only in `~/.claude/` at runtime.
+
+- `claude/skills/frontend-design/SKILL.md` — custom skill for high-quality frontend design
 
 ### Tmux Configuration
 

@@ -91,17 +91,18 @@ echo -e "${YELLOW}4)${NC} NvChad_Venky config"
 echo -e "${YELLOW}5)${NC} Source/reload configs"
 echo -e "${YELLOW}6)${NC} Configure Git (global user.name and user.email)"
 echo -e "${YELLOW}7)${NC} Install tools (docker, ...)"
+echo -e "${YELLOW}8)${NC} Claude Code config (skills)"
 echo
-echo -n "Enter choice(s) [1-7] or 'all': "
+echo -n "Enter choice(s) [1-8] or 'all': "
 read selection
 
 # Parse selection
 declare -A selected
 if [[ "$selection" == "all" ]]; then
-    selected[1]=1 selected[2]=1 selected[3]=1 selected[4]=1 selected[5]=1 selected[6]=1 selected[7]=1
+    selected[1]=1 selected[2]=1 selected[3]=1 selected[4]=1 selected[5]=1 selected[6]=1 selected[7]=1 selected[8]=1
 else
     for num in ${(s: :)selection}; do
-        if [[ "$num" =~ ^[1-7]$ ]]; then
+        if [[ "$num" =~ ^[1-8]$ ]]; then
             selected[$num]=1
         fi
     done
@@ -511,6 +512,35 @@ if [[ -n "${selected[7]}" ]]; then
     fi
 
     success "Tools installation complete"
+fi
+
+###########################################################################
+# Claude Code config
+###########################################################################
+if [[ -n "${selected[8]}" ]]; then
+    echo
+    echo -e "${GREEN}=== Claude Code Config ===${NC}"
+
+    mkdir -p "$HOME/.claude/skills"
+
+    # Symlink each skill directory
+    for skill_dir in "$DOTFILES_DIR"/claude/skills/*/; do
+        [[ -d "$skill_dir" ]] || continue
+        skill_name="${skill_dir:t}"
+        target="$HOME/.claude/skills/$skill_name"
+
+        if [[ -e "$target" && ! -L "$target" ]]; then
+            info "Backing up $target -> $HOME/.bkp/.claude/skills/$skill_name"
+            mkdir -p "$HOME/.bkp/.claude/skills"
+            mv "$target" "$HOME/.bkp/.claude/skills/$skill_name"
+        fi
+
+        [[ -L "$target" ]] && rm "$target"
+        ln -s "$skill_dir" "$target"
+        success "Linked skill: $skill_name"
+    done
+
+    success "Claude Code config complete"
 fi
 
 echo
