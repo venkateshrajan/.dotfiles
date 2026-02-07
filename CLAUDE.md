@@ -13,9 +13,10 @@ git clone --recurse-submodules <repo> && ./install.sh
 ```
 
 - `install.sh` — interactive zsh-based installer that:
-  - Installs prerequisites (oh-my-zsh, plugins, fzf, ripgrep, zoxide, lsd, tpm)
+  - Installs prerequisites (oh-my-zsh, plugins, fzf, ripgrep, tmux, gh, zoxide, lsd, tpm)
   - Installs neovim (via package manager or AppImage) + optional NvChad starter + providers
   - Symlinks configs and backs up existing files to `~/.bkp/`
+  - Configures git global user.name and user.email (interactive prompts)
   - NvChad starter → `~/.config/nvim`, init.lua → `~/.config/nvim-init`, NvChad_Venky → `~/.config/NvChad_Venky`
 - `g_install.sh` — root-based bash installer using `dialog` for multi-step setup (alternative to install.sh)
 - `install/nvim.sh`, `install/tmux.sh` — individual tool installers (require root)
